@@ -20,12 +20,11 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
  [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 [![downloads](https://img.shields.io/npm/dt/homebridge-irobot-v2)](https://npmcharts.com/compare/homebridge-irobot-v2?log=true&interval=1&minimal=true)
 
-[![npm](https://img.shields.io/npm/v/homebridge-irobot/latest?label=latest)](https://www.npmjs.com/package/homebridge-irobot)
-[![npm](https://img.shields.io/npm/v/homebridge-irobot/beta?label=beta)](../../wiki/Beta-Version)  
+[![npm](https://img.shields.io/npm/v/homebridge-irobot-v2/latest?label=latest)](https://www.npmjs.com/package/homebridge-irobot)
+[![npm](https://img.shields.io/npm/v/homebridge-irobot-v2/beta?label=beta)](../../wiki/Beta-Version)  
  
 [![build workflow](https://github.com/taurgis/homebridge-iRobot-v2/actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
 [![license](https://badgen.net/github/license/taurgis/homebridge-irobot-v2)](/LICENSE)
-
 
 </span>
 
@@ -38,7 +37,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 
 ## Supported Devices
 > Don't See Your Device Below?
-> Let Me Know If It Worked By Filling Out [This Template](https://github.com/bloomkd46/homebridge-iRobot/issues/new?assignees=bloomkd46&labels=enchancment&template=add-supported-device.yml&title=Supported+Device%3A+)
+> Let Me Know If It Worked By Filling Out [This Template](https://github.com/taurgis/homebridge-iRobot-v2/issues/new?assignees=taurgis&labels=enchancment&template=add-supported-device.yml&title=Supported+Device%3A+)
 
 | Model | Supported | Reported By |
 |-|-|-|
@@ -61,7 +60,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 
 
 ## Features:
-  - [x] Approved By Homebridge
+  - [] Approved By Homebridge
   - [x] Custom UI For Viewing Devices
   - [x] On/Off Control
   - [x] Room-By-Room Control On Models That Support It (Only Tested When Using One Map)
@@ -72,6 +71,8 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
   
 ## TODO: 
   - [ ] Add ability for rooms to show up with names instead of id number
+  - [ ] Support iOS 18 Features
+
 ### Prerequisites
 
 - To use this plugin, you will need to already have [Homebridge](https://homebridge.io) (at least v1.3.5) or [HOOBS](https://hoobs.org) (at least v4) installed. Refer to the links for more information and installation instructions.
@@ -95,6 +96,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 
 - To the creators/contributors of [Homebridge](https://homebridge.io) who make this plugin possible.
 - To [homebridge-Meross](https://github.com/bwp91/homebridge-meross) of which I based this readme, wiki, and homebridge-ui off of
+- To [homebridge-IRobot](https://github.com/bloomkd46/homebridge-iRobot) which this plugin is based off of
 - To [Dorita980](https://github.com/koalazak/dorita980) Who cracked the iRobot API
 
 ### Disclaimer
