@@ -1,3 +1,9 @@
+### 2.1.17
+* Correctly rename everything to V2
+
+### 2.1.16
+* Accepted pull request for i3 room support
+
 ### 2.1.15 
 * Set program to resume robot if job is already active
 * Set program to stop Roomba if room-by-room request received
