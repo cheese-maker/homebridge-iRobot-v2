@@ -1,3 +1,11 @@
+### 3.0.0-alpha.02
+* Refactoring of the code
+* Updating documentation
+
+### 3.0.0-alpha.01
+* Refactoring of the code for own usage
+* Added extra logging
+
 ### 2.1.17
 * Correctly rename everything to V2
 
