@@ -1,3 +1,6 @@
+### 3.0.0-alpha.03
+* Added extra logging for room-by-room debugging
+
 ### 3.0.0-alpha.02
 * Refactoring of the code
 * Updating documentation

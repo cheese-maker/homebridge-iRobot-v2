@@ -276,14 +276,17 @@ export class iRobotPlatformAccessory {
                     index = this.accessory.context.maps.indexOf(map);
                 }
             }
+
             if (index !== -1) {
                 for (const region of lastCommand.regions) {
                     let exists = false;
+
                     for (const region_ of this.accessory.context.maps[index].regions) {
                         if (region_.region_id === region.region_id) {
                             exists = true;
                         }
                     }
+
                     if (!exists) {
                         this.platform.log.info('Adding new region for roomba:', this.device.name, '\n', region);
                         this.accessory.context.maps[index].regions.push(region);
@@ -344,7 +347,13 @@ export class iRobotPlatformAccessory {
                             this.accessory.context.activeRooms.splice(this.accessory.context.activeRooms.indexOf(region.region_id));
                         }
                         this.platform.log.info(activate ? 'enabling' : 'disabling',
-                            'room ' + region.region_id + ' of map ' + index + ' on roomba ' + this.device.name);
+                            'room ' +
+                            region.region_id +
+                            ' of map ' +
+                            index +
+                            ' on roomba ' +
+                            this.device.name +
+                            '(' + this.accessory.context.maps[this.accessory.context.activeMap].pmap_id + ')');
                     })
                     .onGet(() => {
                         return this.accessory.context.activeMap === index ?
@@ -499,8 +508,14 @@ export class iRobotPlatformAccessory {
                 if (value === 1) {
                     //give scenes a chance to run
                     setTimeout(async () => {
+                        this.platform.log.info('Starting Clean Cycle');
+                        this.platform.log.info('Room By Room:', this.roomByRoom);
+
                         if (this.roomByRoom) {
                             await this.roomba.stop();
+
+                            this.platform.log.info('Active Rooms:', JSON.stringify(this.accessory.context));
+
                             if (this.accessory.context.activeRooms !== undefined) {
                                 args = {
                                     'ordered': 1,
