@@ -17,7 +17,6 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
  
 (Wiki Links Don't Work Yet)
  
- [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 [![downloads](https://img.shields.io/npm/dt/homebridge-irobot-v2)](https://npmcharts.com/compare/homebridge-irobot-v2?log=true&interval=1&minimal=true)
 
 [![npm](https://img.shields.io/npm/v/homebridge-irobot-v2/latest?label=latest)](https://www.npmjs.com/package/homebridge-irobot)
@@ -60,7 +59,6 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 
 
 ## Features:
-  - [] Approved By Homebridge
   - [x] Custom UI For Viewing Devices
   - [x] On/Off Control
   - [x] Room-By-Room Control On Models That Support It (Only Tested When Using One Map)
@@ -70,6 +68,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
   - [x] Stuck Sensor
   
 ## TODO: 
+  - [ ] Approved By Homebridge
   - [ ] Add ability for rooms to show up with names instead of id number
   - [ ] Support iOS 18 Features
 
