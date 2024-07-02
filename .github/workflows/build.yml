@@ -2,10 +2,10 @@ name: Build and Lint
 
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
     paths: [ src/**, .github/workflows/build.yml ] 
   pull_request:
-    branches: [ master ]
+    branches: [ develop ]
     paths: [ src/** ]
   workflow_dispatch:
 
@@ -51,7 +51,7 @@ jobs:
           
       - name: Push changes
         if: steps.commit.outputs.push == 'true' && matrix.node-version == '16.x' && github.event_name == 'push'
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@develop
         with:
            github_token: ${{ secrets.GITHUB_TOKEN }}
            
@@ -93,6 +93,6 @@ jobs:
           
       - name: Push changes
         if: steps.commit.outputs.push == 'true' && matrix.node-version == '16.x' && github.event_name == 'push'
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@develop
         with:
            github_token: ${{ secrets.GITHUB_TOKEN }}
