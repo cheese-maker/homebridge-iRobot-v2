@@ -1,85 +1,85 @@
 import child_process from 'child_process';
 import { Logger, PlatformConfig } from 'homebridge';
 export function getRoombas(email: string, password: string, log: Logger, config: PlatformConfig): Robot[] {
-  //child_process.execSync('chmod -R 755 "' + __dirname + '/scripts"');
-  let robots: Robot[] = [];
+    //child_process.execSync('chmod -R 755 "' + __dirname + '/scripts"');
+    let robots: Robot[] = [];
 
-  if(config.manualDiscovery){
-    log.info('Using manual discovery due to config');
-    robots = config.roombas || [];
-  }else{
-    log.info('Logging into iRobot...');
-    const Robots = child_process.execFileSync(__dirname + '/scripts/getRoombaCredentials.js', [email, password]).toString();
-    try{
-      robots = JSON.parse(Robots);
-      log.debug(Robots);
-    }catch(e){
-      log.error('Faild to login to iRobot, see below for details');
-      log.error(Robots);
-    }
-  }
-  const badRoombas: number[] = [];
-  robots.forEach(robot => {
-    if(robot.autoConfig || !config.autoDiscovery){
-      log.info('Configuring roomba:', robot.name);
-      const robotIP = child_process.execFileSync(__dirname + '/scripts/getRoombaIP.js', [robot.blid]).toString();
-      try{
-        const robotInfo = JSON.parse(robotIP);
-        log.debug(robotIP);
-        robot.ip = robotInfo.ip;
-        delete robotInfo.ip;
-        robot.model = getModel(robotInfo.sku);
-        robot.multiRoom = getMultiRoom(robot.model);
-        robot.info = robotInfo;
-        if(robotInfo.sku.startsWith('m6')){
-          badRoombas.push(robots.indexOf(robot));
-        }
-      }catch(e){
+    if(config.manualDiscovery){
+        log.info('Using manual discovery due to config');
+        robots = config.roombas || [];
+    }else{
+        log.info('Logging into iRobot...');
+        const Robots = child_process.execFileSync(__dirname + '/scripts/getRoombaCredentials.js', [email, password]).toString();
         try{
-          log.error('Failed to configure roomba:', robot.name, 'see below for details');
-          log.error(robotIP);
-        } finally{
-          badRoombas.push(robots.indexOf(robot));
+            robots = JSON.parse(Robots);
+            log.debug(Robots);
+        }catch(e){
+            log.error('Faild to login to iRobot, see below for details');
+            log.error(Robots);
         }
-      }
-    } else {
-      log.info('Skipping configuration for roomba:', robot.name, 'due to config');
     }
-  });
-  for(const roomba of badRoombas){
-    log.warn('Disabling Unconfigured Roomba:', robots[roomba].name);
-    try{
-      robots.splice(roomba);
-    }catch(e){
-      log.error('Failed To Disable Unconfigured Roomba:', robots[roomba].name, 'see below for details');
-      log.error(e as string);
+    const badRoombas: number[] = [];
+    robots.forEach(robot => {
+        if(robot.autoConfig || !config.autoDiscovery){
+            log.info('Configuring roomba:', robot.name);
+            const robotIP = child_process.execFileSync(__dirname + '/scripts/getRoombaIP.js', [robot.blid]).toString();
+            try{
+                const robotInfo = JSON.parse(robotIP);
+                log.debug(robotIP);
+                robot.ip = robotInfo.ip;
+                delete robotInfo.ip;
+                robot.model = getModel(robotInfo.sku);
+                robot.multiRoom = getMultiRoom(robot.model);
+                robot.info = robotInfo;
+                if(robotInfo.sku.startsWith('m6')){
+                    badRoombas.push(robots.indexOf(robot));
+                }
+            }catch(e){
+                try{
+                    log.error('Failed to configure roomba:', robot.name, 'see below for details');
+                    log.error(robotIP);
+                } finally{
+                    badRoombas.push(robots.indexOf(robot));
+                }
+            }
+        } else {
+            log.info('Skipping configuration for roomba:', robot.name, 'due to config');
+        }
+    });
+    for(const roomba of badRoombas){
+        log.warn('Disabling Unconfigured Roomba:', robots[roomba].name);
+        try{
+            robots.splice(roomba);
+        }catch(e){
+            log.error('Failed To Disable Unconfigured Roomba:', robots[roomba].name, 'see below for details');
+            log.error(e as string);
+        }
     }
-  }
-  return robots;
+    return robots;
 
 }
 function getModel(sku: string):string{
-  switch(sku.charAt(0)){
-    case 'j':
-    case 'i':
-    case 's':
-      return sku.substring(0, 2);
-    case 'R':
-      return sku.substring(1, 4);
-    default:
-      return sku;
-  }
+    switch(sku.charAt(0)){
+        case 'j':
+        case 'i':
+        case 's':
+            return sku.substring(0, 2);
+        case 'R':
+            return sku.substring(1, 4);
+        default:
+            return sku;
+    }
 }
 function getMultiRoom(model:string){
-  switch(model.charAt(0)){
-    case 's':
-    case 'j':
-      return parseInt(model.charAt(1)) > 4;
-    case 'i':
-      return parseInt(model.charAt(1)) > 2;
-    default:
-      return false;
-  }
+    switch(model.charAt(0)){
+        case 's':
+        case 'j':
+            return parseInt(model.charAt(1)) > 4;
+        case 'i':
+            return parseInt(model.charAt(1)) > 2;
+        default:
+            return false;
+    }
 }
 export interface Robot {
   'name': string;
