@@ -212,7 +212,7 @@ export class iRobotPlatformAccessory {
     updateRoombaState(data) {
         if (data.cleanMissionStatus.cycle !== this.lastStatus.cycle || data.cleanMissionStatus.phase !== this.lastStatus.phase) {
             eventEmitter.emit('state');
-            this.platform.log.info(this.device.name + '\'s mission update:',
+            this.platform.log.debug(this.device.name + '\'s mission update:',
                 '\n cleeanMissionStatus:', JSON.stringify(data.cleanMissionStatus, null, 2),
                 '\n batPct:', data.batPct,
                 '\n bin:', JSON.stringify(data.bin),
@@ -340,11 +340,18 @@ export class iRobotPlatformAccessory {
                     .onSet((activate) => {
                         if (activate) {
                             this.accessory.context.activeMap = index;
+
                             if (!this.accessory.context.activeRooms.includes(region.region_id)) {
                                 this.accessory.context.activeRooms.push(region.region_id);
                             }
+
+                            this.setMode(0);
                         } else {
                             this.accessory.context.activeRooms.splice(this.accessory.context.activeRooms.indexOf(region.region_id));
+
+                            if(this.accessory.context.activeRooms.length === 0){
+                                this.setMode(1);
+                            }
                         }
                         this.platform.log.info(activate ? 'enabling' : 'disabling',
                             'room ' +
@@ -504,6 +511,7 @@ export class iRobotPlatformAccessory {
         if (this.accessory.context.connected) {
             const configOffAction: string[] = this.platform.config.offAction.split(':');
             let args;
+
             try {
                 if (value === 1) {
                     //give scenes a chance to run
@@ -523,7 +531,9 @@ export class iRobotPlatformAccessory {
                                     'user_pmapv_id': this.accessory.context.maps[this.accessory.context.activeMap].user_pmapv_id,
                                     'regions': [{}],
                                 };
+
                                 args.regions.splice(0);
+
                                 for (const room of this.accessory.context.activeRooms) {
                                     for (const region of this.accessory.context.maps[this.accessory.context.activeMap].regions) {
                                         if (region.region_id === room) {

@@ -1,3 +1,6 @@
+### 3.0.0-alpha.04
+* Attempt 1 to fix room by room starting by adding missing "room" context
+
 ### 3.0.0-alpha.03
 * Added extra logging for room-by-room debugging
 
