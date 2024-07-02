@@ -51,7 +51,7 @@ jobs:
           
       - name: Push changes
         if: steps.commit.outputs.push == 'true' && matrix.node-version == '16.x' && github.event_name == 'push'
-        uses: ad-m/github-push-action@develop
+        uses: ad-m/github-push-action@master
         with:
            github_token: ${{ secrets.GITHUB_TOKEN }}
            
@@ -93,6 +93,6 @@ jobs:
           
       - name: Push changes
         if: steps.commit.outputs.push == 'true' && matrix.node-version == '16.x' && github.event_name == 'push'
-        uses: ad-m/github-push-action@develop
+        uses: ad-m/github-push-action@master
         with:
            github_token: ${{ secrets.GITHUB_TOKEN }}
