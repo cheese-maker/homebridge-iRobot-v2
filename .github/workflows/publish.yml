@@ -55,12 +55,12 @@ jobs:
 
       - name: Publish Beta to npm
         if: github.event.release.prerelease == true
-        run: npm publish --tag=alpha
+        run: npm publish --tag=alpha --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm
         if: github.event.release.prerelease == false
-        run: npm publish
+        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
