@@ -43,6 +43,7 @@ class PluginUiServer extends HomebridgePluginUiServer {
         return []
       }
     });
+    
     this.ready()
   }
 }
