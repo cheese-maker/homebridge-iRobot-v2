@@ -1,3 +1,7 @@
+### 3.0.0-alpha.10 
+* Rework the front UI to redirect to the correct GitHub repo
+
+
 ### 3.0.0-alpha.9 
 * Prevent duplicate change of mode on main Accessory (fan)
 
