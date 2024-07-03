@@ -77,33 +77,33 @@ declare module 'dorita980' {
   interface cleanMissionStatus {
     cleanMissionStatus:
     {
-      cycle: string;
-      phase: string;
-      expireM: number;
-      rechrgM: number;
-      error: number;
-      notReady: number;
-      mssnM: number;
-      sqft: number;
-      initiator: string;
-      nMssn: number;
-    };
-    pose: { theta: number; point: { x: number; y: number } };
+      cycle: string,
+      phase: string,
+      expireM: number,
+      rechrgM: number,
+      error: number,
+      notReady: number,
+      mssnM: number,
+      sqft: number,
+      initiator: string,
+      nMssn: number,
+    },
+    pose: { theta: number, point: { x: number, y: number } },
   }
   interface Data {
     state:
     {
       reported:
       {
-        soundVer: string;
-        uiSwVer: string;
-        navSwVer: string;
-        wifiSwVer: string;
-        mobilityVer: string;
-        bootloaderVer: string;
-        umiVer: string;
-        softwareVer: string;
-      };
-    };
+        soundVer: string,
+        uiSwVer: string,
+        navSwVer: string,
+        wifiSwVer: string,
+        mobilityVer: string,
+        bootloaderVer: string,
+        umiVer: string,
+        softwareVer: string,
+      },
+    },
   }
 }

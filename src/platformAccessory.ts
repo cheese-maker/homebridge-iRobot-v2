@@ -9,8 +9,8 @@ import dorita980 from 'dorita980';
 
 /**
  * Platform Accessory
- * An instance of this class is created for each accessory your platform registers
- * Each accessory may expose multiple services of different service types.
+ *
+ * An instance of this class is created for each Roomba.
  */
 export class iRobotPlatformAccessory {
     private service: Service;
@@ -36,9 +36,9 @@ export class iRobotPlatformAccessory {
     private roomByRoom = false;
 
     constructor(
-    private readonly platform: iRobotPlatform,
-    private readonly accessory: PlatformAccessory,
-    private readonly device: Robot,
+        private readonly platform: iRobotPlatform,
+        private readonly accessory: PlatformAccessory,
+        private readonly device: Robot,
     ) {
         this.platform.api.on('shutdown', () => {
             this.platform.log.info('Disconnecting From Roomba:', device.name);
@@ -47,138 +47,117 @@ export class iRobotPlatformAccessory {
                 this.roomba.end();
             }
         });
+
         this.configureRoomba();
 
-    // set accessory information
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-        .setCharacteristic(this.platform.Characteristic.Manufacturer, 'iRobot')
-        .setCharacteristic(this.platform.Characteristic.Model, this.device.model || this.device.info.sku || 'N/A')
-        .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.info.serialNum || this.accessory.UUID || 'N/A')
-        .setCharacteristic(this.platform.Characteristic.FirmwareRevision, this.device.info.sw || this.device.info.ver || 'N/A')
-        .getCharacteristic(this.platform.Characteristic.Identify).on('set', this.identify.bind(this));
+        // set accessory information
+        this.accessory.getService(this.platform.Service.AccessoryInformation)!
+            .setCharacteristic(this.platform.Characteristic.Manufacturer, 'iRobot')
+            .setCharacteristic(this.platform.Characteristic.Model, this.device.model || this.device.info.sku || 'N/A')
+            .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.info.serialNum || this.accessory.UUID || 'N/A')
+            .setCharacteristic(this.platform.Characteristic.FirmwareRevision, this.device.info.sw || this.device.info.ver || 'N/A')
+            .getCharacteristic(this.platform.Characteristic.Identify).on('set', this.identify.bind(this));
+
+        this.service = this.accessory.getService(this.device.name) ||
+        this.accessory.addService(this.platform.Service.Fanv2, this.device.name, 'Main-Service');
+        this.service.setPrimaryService(true);
+
+        if (this.device.multiRoom && this.accessory.context.maps !== undefined) {
+            this.updateRooms();
+        }
+
+        if (this.binConfig.includes('filter')) {
+            this.binFilter = this.accessory.getService(this.device.name + '\'s Bin Filter') ||
+            this.accessory.addService(this.platform.Service.FilterMaintenance, this.device.name + '\'s Bin Filter', 'Filter-Bin');
+        }
+        if (this.binConfig.includes('contact')) {
+            this.binContact = this.accessory.getService(this.device.name + '\'s Bin Contact Sensor') ||
+            this.accessory.addService(this.platform.Service.ContactSensor, this.device.name + '\'s Bin Contact Sensor', 'Contact-Bin');
+        }
+        if (this.binConfig.includes('motion')) {
+            this.binMotion = this.accessory.getService(this.device.name + '\'s Bin Motion Sensor') ||
+            this.accessory.addService(this.platform.Service.MotionSensor, this.device.name + '\'s Bin Motion Sensor', 'Motion-Bin');
+        }
 
 
-    this.service = this.accessory.getService(this.device.name) ||
-      this.accessory.addService(this.platform.Service.Fanv2, this.device.name, 'Main-Service');
+        this.battery = this.accessory.getService(this.device.name + '\'s Battery') ||
+        this.accessory.addService(this.platform.Service.Battery, this.device.name + '\'s Battery', 'Battery-Service');
 
-    this.service.setPrimaryService(true);
-    if (this.device.multiRoom && this.accessory.context.maps !== undefined) {
-        this.updateRooms();
-    }
+        if (!this.platform.config.hideStuckSensor) {
+            this.stuck = this.accessory.getService(this.device.name + ' Stuck') ||
+            this.accessory.addService(this.platform.Service.MotionSensor, this.device.name + ' Stuck', 'Stuck-MotionSensor');
+        }
 
-    if (this.binConfig.includes('filter')) {
-        this.binFilter = this.accessory.getService(this.device.name + '\'s Bin Filter') ||
-        this.accessory.addService(this.platform.Service.FilterMaintenance, this.device.name + '\'s Bin Filter', 'Filter-Bin');
-    }
-    if (this.binConfig.includes('contact')) {
-        this.binContact = this.accessory.getService(this.device.name + '\'s Bin Contact Sensor') ||
-        this.accessory.addService(this.platform.Service.ContactSensor, this.device.name + '\'s Bin Contact Sensor', 'Contact-Bin');
-    }
-    if (this.binConfig.includes('motion')) {
-        this.binMotion = this.accessory.getService(this.device.name + '\'s Bin Motion Sensor') ||
-        this.accessory.addService(this.platform.Service.MotionSensor, this.device.name + '\'s Bin Motion Sensor', 'Motion-Bin');
-    }
+        this.service.getCharacteristic(this.platform.Characteristic.Active)
+            .onSet(this.set.bind(this))
+            .onGet(this.get.bind(this));
+        this.service.getCharacteristic(this.platform.Characteristic.CurrentFanState)
+            .onGet(this.getState.bind(this));
 
+        if (this.device.multiRoom) {
+            this.service.getCharacteristic(this.platform.Characteristic.TargetFanState)
+                .onGet(this.getMode.bind(this))
+                .onSet(this.setMode.bind(this));
+        }
 
-    this.battery = this.accessory.getService(this.device.name + '\'s Battery') ||
-      this.accessory.addService(this.platform.Service.Battery, this.device.name + '\'s Battery', 'Battery-Service');
-
-    if (!this.platform.config.hideStuckSensor) {
-        this.stuck = this.accessory.getService(this.device.name + ' Stuck') ||
-        this.accessory.addService(this.platform.Service.MotionSensor, this.device.name + ' Stuck', 'Stuck-MotionSensor');
-    }
-    // set the service name, this is what is displayed as the default name on the Home app
-    // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    /*this.service.setCharacteristic(this.platform.Characteristic.Name, this.device.name);
-
-    if(this.binConfig.includes('filter')){
-      this.binFilter.setCharacteristic(this.platform.Characteristic.Name, this.device.name + '\'s Bin');
-    }
-    if(this.binConfig.includes('contact')){
-      this.binContact.setCharacteristic(this.platform.Characteristic.Name, this.device.name + '\'s Bin');
-    }
-    if(this.binConfig.includes('motion')){
-      this.binMotion.setCharacteristic(this.platform.Characteristic.Name, this.device.name + '\'s Bin');
-    }
-
-    this.battery.setCharacteristic(this.platform.Characteristic.Name, this.device.name + '\'s Battery');
-    this.stuck.setCharacteristic(this.platform.Characteristic.Name, this.device.name + ' Stuck');
-*/
+        if (this.binConfig.includes('filter')) {
+            this.binFilter.getCharacteristic(this.platform.Characteristic.FilterChangeIndication)
+                .onGet(this.getBinfull.bind(this));
+        }
+        if (this.binConfig.includes('contact')) {
+            this.binContact.getCharacteristic(this.platform.Characteristic.ContactSensorState)
+                .onGet(this.getBinfull.bind(this));
+        }
+        if (this.binConfig.includes('motion')) {
+            this.binMotion.getCharacteristic(this.platform.Characteristic.MotionDetected)
+                .onGet(this.getBinfullBoolean.bind(this));
+        }
 
 
-    // each service must implement at-minimum the "required characteristics" for the given service type
-    // see https://developers.homebridge.io/#/service/Lightbulb
-
-    this.service.getCharacteristic(this.platform.Characteristic.Active)
-        .onSet(this.set.bind(this))                // SET - bind to the `setOn` method below
-        .onGet(this.get.bind(this));               // GET - bind to the `getOn` method below
-    this.service.getCharacteristic(this.platform.Characteristic.CurrentFanState)
-        .onGet(this.getState.bind(this));
-
-    if (this.device.multiRoom) {
-        this.service.getCharacteristic(this.platform.Characteristic.TargetFanState)
-            .onGet(this.getMode.bind(this)) // GET
-            .onSet(this.setMode.bind(this));
-    }
-
-    if (this.binConfig.includes('filter')) {
-        this.binFilter.getCharacteristic(this.platform.Characteristic.FilterChangeIndication)
-            .onGet(this.getBinfull.bind(this));
-    }
-    if (this.binConfig.includes('contact')) {
-        this.binContact.getCharacteristic(this.platform.Characteristic.ContactSensorState)
-            .onGet(this.getBinfull.bind(this));
-    }
-    if (this.binConfig.includes('motion')) {
-        this.binMotion.getCharacteristic(this.platform.Characteristic.MotionDetected)
-            .onGet(this.getBinfullBoolean.bind(this));
-    }
+        this.battery.getCharacteristic(this.platform.Characteristic.StatusLowBattery)
+            .onGet(this.getBatteryStatus.bind(this));
+        this.battery.getCharacteristic(this.platform.Characteristic.BatteryLevel)
+            .onGet(this.getBatteryLevel.bind(this));
+        this.battery.getCharacteristic(this.platform.Characteristic.ChargingState)
+            .onGet(this.getChargeState.bind(this));
 
 
-    this.battery.getCharacteristic(this.platform.Characteristic.StatusLowBattery)
-        .onGet(this.getBatteryStatus.bind(this));
-    this.battery.getCharacteristic(this.platform.Characteristic.BatteryLevel)
-        .onGet(this.getBatteryLevel.bind(this));
-    this.battery.getCharacteristic(this.platform.Characteristic.ChargingState)
-        .onGet(this.getChargeState.bind(this));
-
-
-    if (!this.platform.config.hideStuckSensor) {
-        this.stuck.getCharacteristic(this.platform.Characteristic.MotionDetected)
-            .onGet(this.getStuck.bind(this));
-    }
-    /*this.battery.getCharacteristic(this.platform.Characteristic.StatusLowBattery)
-      .onSet(this.get)
-      */
+        if (!this.platform.config.hideStuckSensor) {
+            this.stuck.getCharacteristic(this.platform.Characteristic.MotionDetected)
+                .onGet(this.getStuck.bind(this));
+        }
+        /*this.battery.getCharacteristic(this.platform.Characteristic.StatusLowBattery)
+        .onSet(this.get)
+        */
         /**
-     * Creating multiple services of the same type.
-     *
-     * To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
-     * when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
-     * this.accessory.getService('NAME') || this.accessory.addService(this.platform.Service.Lightbulb, 'NAME', 'USER_DEFINED_SUBTYPE_ID');
-     *
-     * The USER_DEFINED_SUBTYPE must be unique to the platform accessory (if you platform exposes multiple accessories, each accessory
-     * can use the same sub type id.)
-     */
+         * Creating multiple services of the same type.
+         *
+         * To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
+         * when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
+         * this.accessory.getService('NAME') || this.accessory.addService(this.platform.Service.Lightbulb, 'NAME', 'USER_DEFINED_SUBTYPE_ID');
+         *
+         * The USER_DEFINED_SUBTYPE must be unique to the platform accessory (if you platform exposes multiple accessories, each accessory
+         * can use the same sub type id.)
+         */
 
         // Example: add two "motion sensor" services to the accessory
-    /*
-    const motionSensorOneService = this.accessory.getService('Motion Sensor One Name') ||
-      this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor One Name', 'YourUniqueIdentifier-1');
+        /*
+        const motionSensorOneService = this.accessory.getService('Motion Sensor One Name') ||
+        this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor One Name', 'YourUniqueIdentifier-1');
 
-    const motionSensorTwoService = this.accessory.getService('Motion Sensor Two Name') ||
-      this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor Two Name', 'YourUniqueIdentifier-2');
-/*
-    /**
-     * Updating characteristics values asynchronously.
-     *
-     * Example showing how to update the state of a Characteristic asynchronously instead
-     * of using the `on('get')` handlers.
-     * Here we change update the motion sensor trigger states on and off every 10 seconds
-     * the `updateCharacteristic` method.
-     *
-     */
-    //let motionDetected = false;
+        const motionSensorTwoService = this.accessory.getService('Motion Sensor Two Name') ||
+        this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor Two Name', 'YourUniqueIdentifier-2');
+    /*
+        /**
+         * Updating characteristics values asynchronously.
+         *
+         * Example showing how to update the state of a Characteristic asynchronously instead
+         * of using the `on('get')` handlers.
+         * Here we change update the motion sensor trigger states on and off every 10 seconds
+         * the `updateCharacteristic` method.
+         *
+         */
+        //let motionDetected = false;
     }
 
     async configureRoomba() {
@@ -350,7 +329,7 @@ export class iRobotPlatformAccessory {
                         } else {
                             this.accessory.context.activeRooms.splice(this.accessory.context.activeRooms.indexOf(region.region_id));
 
-                            if(this.accessory.context.activeRooms.length === 0){
+                            if (this.accessory.context.activeRooms.length === 0) {
                                 this.setMode(1);
                             }
                         }

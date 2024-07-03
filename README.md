@@ -13,9 +13,6 @@ to remove the old plugin and install this one. The general idea for this new plu
 
 Once the latest iOS 18 update is released, I will update the plugin to support the new features (if possible).
 
-
- 
-(Wiki Links Don't Work Yet)
  
 [![downloads](https://img.shields.io/npm/dt/homebridge-irobot-v2)](https://npmcharts.com/compare/homebridge-irobot-v2?log=true&interval=1&minimal=true)
 
@@ -50,7 +47,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 | Braava m6 | No | [Jer-emy](https://github.com/Jer-emy) |
 | m6 | Yes | [ginoledesma](https://github.com/ginoledesma) |
 | j7 | Yes | [ginoledesma](https://github.com/ginoledesma) |
-| i3 | No | [rminear68](https://github.com/rminear68) |
+| i3 | yes | [taurgis](https://github.com/taurgis) |
 | 980 | No | [jeanchrijaz](https://github.com/jeanchrijaz) |
 | i9 | Yes | [douginoz](https://github.com/douginoz) |
 | 960 | Yes | [NateUT99](https://github.com/NateUT99) |

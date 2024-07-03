@@ -14,9 +14,10 @@ const blid = process.argv[2];
 const attempt = process.argv[3] || 1
 
 if(attempt>5){
-console.log('No Roomba Found With Blid:', blid);
+    console.log('No Roomba Found With Blid:', blid);
     process.exit(0);
 }
+
 getRobotIP();
 
 function getRobotIP () {

@@ -30,10 +30,21 @@
     "no-multi-spaces": ["warn", { "ignoreEOLComments": true }],
     "no-trailing-spaces": ["warn"],
     "lines-between-class-members": ["warn", "always", {"exceptAfterSingleLine": true}],
+    "keyword-spacing": ["warn", { "before": true, "after": true }],
+    "space-before-blocks": ["warn", "always"],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/semi": ["warn"],
-    "@typescript-eslint/member-delimiter-style": ["warn"]
+    "@typescript-eslint/member-delimiter-style": ["warn", {
+      "multiline": {
+        "delimiter": "comma",
+        "requireLast": true
+      },
+      "singleline": {
+        "delimiter": "comma",
+        "requireLast": false
+      }
+    }]
   }
 }
