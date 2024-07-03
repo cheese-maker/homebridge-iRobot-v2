@@ -1,3 +1,7 @@
+### 3.0.0-alpha.7 
+* Re-introduce scripts
+
+
 ### 3.0.0-alpha.6 
 * Automatically update fan mode based on room selection.
 
