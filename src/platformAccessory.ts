@@ -79,7 +79,6 @@ export class iRobotPlatformAccessory {
             this.accessory.addService(this.platform.Service.MotionSensor, this.device.name + '\'s Bin Motion Sensor', 'Motion-Bin');
         }
 
-
         this.battery = this.accessory.getService(this.device.name + '\'s Battery') ||
         this.accessory.addService(this.platform.Service.Battery, this.device.name + '\'s Battery', 'Battery-Service');
 
