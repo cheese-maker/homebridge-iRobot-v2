@@ -126,38 +126,6 @@ export class iRobotPlatformAccessory {
             this.stuck.getCharacteristic(this.platform.Characteristic.MotionDetected)
                 .onGet(this.getStuck.bind(this));
         }
-        /*this.battery.getCharacteristic(this.platform.Characteristic.StatusLowBattery)
-        .onSet(this.get)
-        */
-        /**
-         * Creating multiple services of the same type.
-         *
-         * To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
-         * when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
-         * this.accessory.getService('NAME') || this.accessory.addService(this.platform.Service.Lightbulb, 'NAME', 'USER_DEFINED_SUBTYPE_ID');
-         *
-         * The USER_DEFINED_SUBTYPE must be unique to the platform accessory (if you platform exposes multiple accessories, each accessory
-         * can use the same sub type id.)
-         */
-
-        // Example: add two "motion sensor" services to the accessory
-        /*
-        const motionSensorOneService = this.accessory.getService('Motion Sensor One Name') ||
-        this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor One Name', 'YourUniqueIdentifier-1');
-
-        const motionSensorTwoService = this.accessory.getService('Motion Sensor Two Name') ||
-        this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor Two Name', 'YourUniqueIdentifier-2');
-    /*
-        /**
-         * Updating characteristics values asynchronously.
-         *
-         * Example showing how to update the state of a Characteristic asynchronously instead
-         * of using the `on('get')` handlers.
-         * Here we change update the motion sensor trigger states on and off every 10 seconds
-         * the `updateCharacteristic` method.
-         *
-         */
-        //let motionDetected = false;
     }
 
     async configureRoomba() {
@@ -326,11 +294,13 @@ export class iRobotPlatformAccessory {
                             }
 
                             this.setMode(0);
+                            this.service.setCharacteristic(this.platform.Characteristic.TargetFanState, 0);
                         } else {
                             this.accessory.context.activeRooms.splice(this.accessory.context.activeRooms.indexOf(region.region_id));
 
                             if (this.accessory.context.activeRooms.length === 0) {
                                 this.setMode(1);
+                                this.service.setCharacteristic(this.platform.Characteristic.TargetFanState, 1);
                             }
                         }
                         this.platform.log.info(activate ? 'enabling' : 'disabling',
