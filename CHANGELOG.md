@@ -1,3 +1,7 @@
+### 3.0.0-alpha.6 
+* Automatically update fan mode based on room selection.
+
+
 ### 3.0.0-alpha.05
 * Refactoring of the code
 * Updating libraries
