@@ -293,13 +293,11 @@ export class iRobotPlatformAccessory {
                                 this.accessory.context.activeRooms.push(region.region_id);
                             }
 
-                            this.setMode(0);
                             this.service.setCharacteristic(this.platform.Characteristic.TargetFanState, 0);
                         } else {
                             this.accessory.context.activeRooms.splice(this.accessory.context.activeRooms.indexOf(region.region_id));
 
                             if (this.accessory.context.activeRooms.length === 0) {
-                                this.setMode(1);
                                 this.service.setCharacteristic(this.platform.Characteristic.TargetFanState, 1);
                             }
                         }
@@ -442,16 +440,12 @@ export class iRobotPlatformAccessory {
         }
     }
 
-
-
     async identify() {
         if (this.accessory.context.connected) {
             await this.roomba.find();
             this.platform.log.info('Identifying', this.device.name, '(Note: Some Models Won\'t Beep If Docked');
         }
     }
-
-
 
     /**
    * Handle "SET" requests from HomeKit
@@ -523,8 +517,6 @@ export class iRobotPlatformAccessory {
             }
         }
     }
-
-
 
     async setMode(value: CharacteristicValue) {
         if (this.accessory.context.connected) {

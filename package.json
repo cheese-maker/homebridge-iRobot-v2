@@ -1,7 +1,7 @@
 {
   "displayName": "Hombrige iRobot V2",
   "name": "homebridge-irobot-v2",
-  "version": "3.0.0-alpha.7",
+  "version": "3.0.0-alpha.8",
   "description": "A homebridge plugin for controlling iRobot devices",
   "license": "Apache-2.0",
   "repository": {
@@ -19,7 +19,7 @@
   "scripts": {
     "lint": "eslint src/**.ts --max-warnings=0 --fix",
     "watch": "npm run build && npm link && nodemon",
-    "build": "rimraf ./dist && tsc",
+    "build": "rimraf ./dist && tsc && chmod -R 755 dist/scripts",
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
