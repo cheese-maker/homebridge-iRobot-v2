@@ -1,3 +1,7 @@
+### 3.0.0-alpha.05
+* Refactoring of the code
+* Updating libraries
+
 ### 3.0.0-alpha.04
 * Attempt 1 to fix room by room starting by adding missing "room" context
 
