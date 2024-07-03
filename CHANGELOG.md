@@ -1,3 +1,7 @@
+### 3.0.0-alpha.9 
+* Prevent duplicate change of mode on main Accessory (fan)
+
+
 ### 3.0.0-alpha.7 
 * Re-introduce scripts
 
