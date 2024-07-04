@@ -468,16 +468,16 @@ export class iRobotPlatformAccessory {
 
                         return;
                     }
+
                     this.starting = true;
+
                     //give scenes a chance to run
                     setTimeout(async () => {
                         this.platform.log.info('Starting Clean Cycle');
                         this.platform.log.info('Room By Room:', this.roomByRoom);
 
                         if (this.roomByRoom) {
-                            //await this.roomba.stop();
-
-                            this.platform.log.info('Active Rooms:', JSON.stringify(this.accessory.context));
+                            this.platform.log.debug('Active Rooms:', JSON.stringify(this.accessory.context));
 
                             if (this.accessory.context.activeRooms !== undefined) {
                                 args = {
@@ -498,16 +498,18 @@ export class iRobotPlatformAccessory {
                                 }
                                 this.platform.log.debug('Clean Room Args:\n', JSON.stringify(args));
                                 this.roomba.cleanRoom(args);
-
-                                this.starting = false;
                             }
                         } else {
                             await this.roomba.clean();
                             await this.roomba.resume();
                         }
+
+                        this.starting = false;
                     }, this.device.multiRoom ? 1000 : 0);
                 } else {
                     await this.roomba[configOffAction[0]]();
+
+                    this.platform.log.info('Stopping Clean Cycle');
 
                     setTimeout(async () => {
                         eventEmitter.emit('state');
@@ -520,15 +522,19 @@ export class iRobotPlatformAccessory {
 
                         eventEmitter.removeAllListeners();
                     });
+
+                    this.starting = false;
                 }
                 this.platform.log.debug('Set', this.device.name, 'To',
                     value === 0 ? configOffAction[0] + (configOffAction[1] !== 'none' ? ' and ' + configOffAction[1] : '') : 'Clean',
                     this.roomByRoom ? 'With args:' + JSON.stringify(args) : '');
+
             } catch (err) {
                 this.platform.log.warn('Error Seting', this.device.name, 'To',
                     value === 0 ? configOffAction[0] + (configOffAction[1] !== 'none' ? ' and ' + configOffAction[1] : '') : 'Clean',
                     this.roomByRoom ? 'With args:' + JSON.stringify(args) : '');
                 this.platform.log.error(err as string);
+                this.starting = false;
             }
         }
     }

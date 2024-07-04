@@ -1,7 +1,7 @@
 {
   "displayName": "Hombrige iRobot V2",
   "name": "homebridge-irobot-v2",
-  "version": "3.0.0-alpha.10",
+  "version": "3.0.0-alpha.12",
   "description": "A homebridge plugin for controlling iRobot devices",
   "license": "Apache-2.0",
   "repository": {
@@ -37,8 +37,8 @@
   },
   "devDependencies": {
     "@types/node": "16.10.9",
-    "@typescript-eslint/eslint-plugin": "7.15.0",
-    "@typescript-eslint/parser": "7.15.0",
+    "@typescript-eslint/eslint-plugin": "5.0.0",
+    "@typescript-eslint/parser": "5.0.0",
     "eslint": "8.57.0",
     "homebridge": "1.8.3",
     "nodemon": "3.1.4",
