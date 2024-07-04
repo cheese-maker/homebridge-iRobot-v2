@@ -1,3 +1,7 @@
+### 3.0.0-alpha.14 
+* Refactor getRoombaCredentials to no longer require a third-party deprecated library
+
+
 ### 3.0.0-alpha.13 
 * Add security checks to prevent multiple start events from triggering the Roombo, causing it to not start at all (saving smart map)
 
