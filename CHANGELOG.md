@@ -1,3 +1,7 @@
+### 3.0.0-alpha.13 
+* Add security checks to prevent multiple start events from triggering the Roombo, causing it to not start at all (saving smart map)
+
+
 ### 3.0.0-alpha.10 
 * Rework the front UI to redirect to the correct GitHub repo
 
