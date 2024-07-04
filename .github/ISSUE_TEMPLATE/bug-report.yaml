@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
-        
+
   - type: textarea
     id: what-happened
     attributes:
@@ -17,7 +17,7 @@ body:
       placeholder: A clear and concise description of what the bug is.
     validations:
       required: true
-      
+
   - type: textarea
     id: how-happend
     attributes:
@@ -25,7 +25,7 @@ body:
       placeholder: Steps to reproduce the behavior.
     validations:
       required: true
-            
+
   - type: textarea
     id: should-happend
     attributes:
@@ -33,7 +33,7 @@ body:
       placeholder: A clear and concise description of what you expected to happen.
     validations:
       required: true
-      
+
   - type: textarea
     id: logs
     attributes:
@@ -43,7 +43,7 @@ body:
       render: shell
     validations:
       required: true
-            
+
   - type: textarea
     id: config
     attributes:
@@ -53,7 +53,7 @@ body:
       render: shell
     validations:
       required: true
-      
+
   - type: input
     id: node-version
     attributes:
@@ -61,7 +61,7 @@ body:
       placeholder: node -v
     validations:
       required: true
-      
+
   - type: input
     id: npm-version
     attributes:
@@ -69,7 +69,7 @@ body:
       placeholder: npm -v
     validations:
       required: true
-      
+
   - type: input
     id: homebridge-version
     attributes:
@@ -77,15 +77,15 @@ body:
       placeholder: Homebridge -V
     validations:
       required: true
-      
+
   - type: input
     id: plugin-version
     attributes:
       label: "Plugin Version:"
-      placeholder: npm list -g homebridge-irobot
+      placeholder: npm list -g homebridge-irobot-v2
     validations:
       required: true
-      
+
   - type: dropdown
     id: os
     attributes:
@@ -99,5 +99,5 @@ body:
         - MacOS
         - Docker
         - Other
-    validations: 
+    validations:
       required: true
