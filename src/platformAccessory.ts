@@ -126,6 +126,8 @@ export class iRobotPlatformAccessory {
             this.stuck.getCharacteristic(this.platform.Characteristic.MotionDetected)
                 .onGet(this.getStuck.bind(this));
         }
+
+        this.platform.log.info('Configured Roomba Accessory:', this.device.name);
     }
 
     async configureRoomba() {
