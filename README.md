@@ -67,7 +67,6 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
   
 ## TODO: 
   - [ ] Approved By Homebridge
-  - [ ] Add ability for rooms to show up with names instead of id number
   - [ ] Support iOS 18 Features
 
 ### Prerequisites
