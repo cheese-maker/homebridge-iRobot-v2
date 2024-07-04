@@ -20,6 +20,7 @@ export class iRobotPlatformAccessory {
     private binContact!: Service;
     private binMotion!: Service;
     private shutdown = false;
+    private starting = false;
 
 
     private binConfig: string[] = this.device.multiRoom && this.platform.config.ignoreMultiRoomBin ?
@@ -450,6 +451,7 @@ export class iRobotPlatformAccessory {
         }
     }
 
+
     /**
    * Handle "SET" requests from HomeKit
    * These are sent when the user changes the state of an accessory, for example, changing the Brightness
@@ -461,13 +463,19 @@ export class iRobotPlatformAccessory {
 
             try {
                 if (value === 1) {
+                    if (this.starting) {
+                        this.platform.log.info('Roomba is already starting a cycle, skipping');
+
+                        return;
+                    }
+                    this.starting = true;
                     //give scenes a chance to run
                     setTimeout(async () => {
                         this.platform.log.info('Starting Clean Cycle');
                         this.platform.log.info('Room By Room:', this.roomByRoom);
 
                         if (this.roomByRoom) {
-                            await this.roomba.stop();
+                            //await this.roomba.stop();
 
                             this.platform.log.info('Active Rooms:', JSON.stringify(this.accessory.context));
 
@@ -490,6 +498,8 @@ export class iRobotPlatformAccessory {
                                 }
                                 this.platform.log.debug('Clean Room Args:\n', JSON.stringify(args));
                                 this.roomba.cleanRoom(args);
+
+                                this.starting = false;
                             }
                         } else {
                             await this.roomba.clean();
