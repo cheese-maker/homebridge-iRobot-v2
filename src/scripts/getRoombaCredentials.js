@@ -2,121 +2,149 @@
 
 'use strict';
 
-const request = require('request');
+const https = require('https');
 
 if (!process.argv[2] || !process.argv[3]) {
-  console.log('Usage: npm run get-password-cloud <iRobot username> <iRobot password> [Gigya API Key]');
-  process.exit();
+    console.log('Usage: npm run get-password-cloud <iRobot username> <iRobot password> [Gigya API Key]');
+    process.exit();
 }
 
 const username = process.argv[2];
 const password = process.argv[3];
 const apiKey = '3_rWtvxmUKwgOzu3AUPTMLnM46lj-LxURGflmu5PcE_sGptTbD-wMeshVbLvYpq01K';
 
+const gigyaURL = new URL('https://accounts.us1.gigya.com/accounts.login');
+gigyaURL.search = new URLSearchParams({
+    apiKey: apiKey,
+    targetenv: 'mobile',
+    loginID: username,
+    password: password,
+    format: 'json',
+    targetEnv: 'mobile'
+});
+
 const gigyaLoginOptions = {
-  'method': 'POST',
-  'uri': 'https://accounts.us1.gigya.com/accounts.login',
-  'json': true,
-  'qs': {
-    'apiKey': apiKey,
-    'targetenv': 'mobile',
-    'loginID': username,
-    'password': password,
-    'format': 'json',
-    'targetEnv': 'mobile'
-  },
-  'headers': {
-    'Connection': 'close'
-  }
+    hostname: gigyaURL.hostname,
+    path: gigyaURL.pathname + gigyaURL.search,
+    method: 'POST',
+    headers: {
+        'Connection': 'close'
+    }
 };
 
-request(gigyaLoginOptions, loginGigyaResponseHandler);
+const req = https.request(gigyaLoginOptions, res => {
+    let data = '';
 
-function loginGigyaResponseHandler (error, response, body) {
-  if (error) {
-    console.log('Fatal error login into Gigya API. Please check your credentials or Gigya API Key.');
-    console.log(error);
-    process.exit(0);
-  }
+    res.on('data', chunk => {
+        data += chunk;
+    });
 
-  if (response.statusCode === 401 || response.statusCode === 403) {
-    console.log('Authentication error. Check your credentials.');
-    console.log(response);
-    process.exit(0);
-  } else if (response.statusCode === 400) {
-    console.log(response);
-    process.exit(0);
-  } else if (response.statusCode === 200) {
-    if (body && body.statusCode && body.statusCode === 403) {
-      console.log('Authentication error. Please check your credentials.');
-      console.log(body);
-      process.exit(0);
+    res.on('end', () => {
+        loginGigyaResponseHandler(null, res, JSON.parse(data));
+    });
+});
+
+req.on('error', error => {
+    loginGigyaResponseHandler(error);
+});
+
+req.end();
+
+function loginGigyaResponseHandler(error, response, body) {
+    if (error) {
+        console.error('Fatal error logging into Gigya API. Please check your credentials or Gigya API Key.', error);
+        process.exit(0);
     }
-    if (body && body.statusCode && body.statusCode === 400) {
-      console.log('Error login into Gigya API.');
-      console.log(body);
-      process.exit(0);
+
+    if ([401, 403].includes(response.statusCode)) {
+        console.error('Authentication error. Check your credentials.', response);
+        process.exit(0);
+    } else if (response.statusCode === 400) {
+        console.error(response);
+        process.exit(0);
+    } else if (response.statusCode === 200) {
+        handleGigyaSuccess(body);
+    } else {
+        console.error('Unexpected response. Checking again...');
     }
-    if (body && body.statusCode && body.statusCode === 200 && body.errorCode === 0 && body.UID && body.UIDSignature && body.signatureTimestamp && body.sessionInfo && body.sessionInfo.sessionToken) {
-      const iRobotLoginOptions = {
-        'method': 'POST',
-        'uri': 'https://unauth2.prod.iot.irobotapi.com/v2/login',
-        'json': true,
-        'body': {
-          'app_id': 'ANDROID-C7FB240E-DF34-42D7-AE4E-A8C17079A294',
-          'assume_robot_ownership': 0,
-          'gigya': {
+}
+
+function handleGigyaSuccess(body) {
+    if (body.statusCode === 403) {
+        console.error('Authentication error. Please check your credentials.', body);
+        process.exit(0);
+    }
+    if (body.statusCode === 400) {
+        console.error('Error logging into Gigya API.', body);
+        process.exit(0);
+    }
+    if (body.statusCode === 200 && body.errorCode === 0 && body.UID && body.UIDSignature && body.signatureTimestamp && body.sessionInfo && body.sessionInfo.sessionToken) {
+        loginToIRobot(body);
+    } else {
+        console.error('Error logging into iRobot account. Missing fields in login response.', body);
+        process.exit(0);
+    }
+}
+
+function loginToIRobot(body) {
+    const iRobotLoginOptions = {
+        hostname: 'unauth2.prod.iot.irobotapi.com',
+        path: '/v2/login',
+        method: 'POST',
+        headers: {
+            'Connection': 'close',
+            'Content-Type': 'application/json'
+        }
+    };
+
+    const req = https.request(iRobotLoginOptions, res => {
+        let data = '';
+
+        res.on('data', chunk => {
+            data += chunk;
+        });
+
+        res.on('end', () => {
+            loginIrobotResponseHandler(null, res, JSON.parse(data));
+        });
+    });
+
+    req.on('error', error => {
+        loginIrobotResponseHandler(error);
+    });
+
+    req.write(JSON.stringify({
+        'app_id': 'ANDROID-C7FB240E-DF34-42D7-AE4E-A8C17079A294',
+        'assume_robot_ownership': 0,
+        'gigya': {
             'signature': body.UIDSignature,
             'timestamp': body.signatureTimestamp,
             'uid': body.UID
-          }
-        },
-        'headers': {
-          'Connection': 'close'
         }
-      };
-      request(iRobotLoginOptions, loginIrobotResponseHandler);
-    } else {
-      console.log('Error login into iRobot account. Missing fields in login response.');
-      console.log(body);
-      process.exit(0);
+    }));
+
+    req.end();
+}
+
+function loginIrobotResponseHandler(error, response, body) {
+    if (error) {
+        console.error('Fatal error logging into iRobot account. Please check your credentials or API Key.', error);
+        process.exit(0);
     }
-  } else {
-    console.log('Unespected response. Checking again...');
-  }
+    if (body && body.robots) {
+        printRobots(body.robots);
+    } else {
+        console.error('Fatal error logging into iRobot account. Please check your credentials or API Key.', body);
+        process.exit(0);
+    }
 }
 
-function loginIrobotResponseHandler (error, response, body) {
-  let index = 0;
-  if (error) {
-    console.log('Fatal error login into iRobot account. Please check your credentials or API Key.');
-    console.log(error);
-    process.exit(0);
-  }
-  if (body && body.robots) {
-    const robotCount = Object.keys(body.robots).length;
-    //console.log('Found ' + robotCount + ' robot(s)!');
-    console.log('[')
-    Object.keys(body.robots).map(function (r) {
-      index++;
-      console.log('{"name": "'+ body.robots[r].name +'", "blid": "'+ r + '", "password": "'+ body.robots[r].password + '", "ip": "'+ body.robots[r].ip + '"}');
-      /*
-      console.log('Robot "' + body.robots[r].name + '" (sku: ' + body.robots[r].sku + ' SoftwareVer: ' + body.robots[r].softwareVer + '):');
-      console.log('BLID=> ' + r);
-      console.log('Password=> ' + body.robots[r].password + ' <= Yes, all this string.');
-      console.log('');
-      */
-     if (index == robotCount) {
-       console.log(']');
-     }else {
-       console.log(',')
-     }
-    });
-    //console.log('Use this credentials in dorita980 lib :)');
-  } else {
-    console.log('Fatal error login into iRobot account. Please check your credentials or API Key.');
-    console.log(body);
-    process.exit(0);
-  }
+function printRobots(robots) {
+    const robotEntries = Object.entries(robots).map(([id, robot]) => ({
+        name: robot.name,
+        blid: id,
+        password: robot.password,
+        ip: robot.ip
+    }));
+    console.log(JSON.stringify(robotEntries, null, 2));
 }
-
