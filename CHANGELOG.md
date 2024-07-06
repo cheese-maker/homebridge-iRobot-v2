@@ -1,3 +1,7 @@
+### 3.0.0 
+
+
+
 ### 3.0.0-alpha.14 
 * Refactor getRoombaCredentials to no longer require a third-party deprecated library
 
