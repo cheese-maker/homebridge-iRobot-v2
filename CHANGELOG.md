@@ -1,3 +1,7 @@
+### 3.0.1 
+* Update package information for Homebridge verification
+
+
 ### 3.0.0 
 * Release of 3.0.0
 
