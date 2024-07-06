@@ -1,13 +1,13 @@
 name: Add Supported Device
 description: inform me of a supported device not currently known
 title: "Add Supported Device: "
-labels: update-devices
+labels: ['update-devices']
 body:
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to fill out this Supported Device Reguest!
-        
+
   - type: input
     attributes:
       label: "Roomba Model:"
@@ -15,7 +15,7 @@ body:
       placeholder: i7
     validations:
       required: true
-        
+
   - type: dropdown
     id: supported
     validations:

@@ -1,9 +1,9 @@
 name: Support Request
 description: Need Help?
 title: "Support Request: "
-labels: "question, help wanted"
+labels: ["question", "help wanted"]
 assignees:
-  - bloomkd46
+  - taurgis
 body:
   - type: markdown
     attributes:

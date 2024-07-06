@@ -2,7 +2,7 @@
   "displayName": "Hombrige iRobot V2",
   "name": "homebridge-irobot-v2",
   "version": "3.0.0-alpha.14",
-  "description": "A homebridge plugin for controlling iRobot devices",
+  "description": "A Homebridge plugin for controlling iRobot devices",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -43,7 +43,7 @@
     "nodemon": "3.1.4",
     "rimraf": "5.0.7",
     "ts-node": "10.9.2",
-    "typedoc": "^0.26.3",
+    "typedoc": "0.26.3",
     "typescript": "5.5.3"
   }
 }

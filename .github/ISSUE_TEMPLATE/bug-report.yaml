@@ -1,9 +1,9 @@
 name: Bug Report
 description: create a report to help us improve
 title: "Bug Report: "
-labels: [bug]
+labels: ["bug"]
 assignees:
-  - bloomkd46
+  - taurgis
 body:
   - type: markdown
     attributes:
