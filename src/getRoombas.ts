@@ -83,6 +83,8 @@ function getMultiRoom(model:string) {
             return parseInt(model.charAt(1)) > 4;
         case 'i':
             return parseInt(model.charAt(1)) > 2;
+        case 'm':
+            return parseInt(model.charAt(1)) === 6;
         default:
             return false;
     }
