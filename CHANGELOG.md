@@ -1,3 +1,7 @@
+### 3.1.0-alpha.1 
+- No longer add m6 as a bad roomba by default
+
+
 ### 3.0.1 
 * Update package information for Homebridge verification
 
