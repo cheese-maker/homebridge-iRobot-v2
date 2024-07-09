@@ -1,3 +1,7 @@
+### 3.1.0-alpha.2 
+* Add multiroom support for m6
+
+
 ### 3.1.0-alpha.1 
 - No longer add m6 as a bad roomba by default
 
