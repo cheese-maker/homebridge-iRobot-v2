@@ -44,7 +44,9 @@ export class iRobotPlatformAccessory {
         this.platform.api.on('shutdown', () => {
             this.platform.log.info('Disconnecting From Roomba:', device.name);
             this.shutdown = true;
+
             if (this.accessory.context.connected) {
+                // Free MQTT connection
                 this.roomba.end();
             }
         });
@@ -132,31 +134,32 @@ export class iRobotPlatformAccessory {
 
     async configureRoomba() {
         this.accessory.context.connected = false;
+
         if (this.device.info.sku?.startsWith('j')) {
             process.env.ROBOT_CIPHERS = 'TLS_AES_256_GCM_SHA384';
         }
+
         this.roomba = new dorita980.Local(this.device.blid, this.device.password, this.device.ip,
             this.device.info.ver !== undefined ? parseInt(this.device.info.ver) as 2 | 3 : 2);
+
         this.roomba.on('connect', () => {
             this.accessory.context.connected = true;
-            this.platform.log.info('Succefully connected to roomba', this.device.name);
+            this.platform.log.info('Successfully connected to roomba', this.device.name);
         }).on('offline', () => {
             this.accessory.context.connected = false;
-            this.platform.log.warn('Roomba', this.device.name, ' went offline, disconnecting...');
-            this.roomba.end();
+            this.platform.log.warn('Roomba', this.device.name, ' went offline...');
+        }).on('reconnect', () => {
+            this.accessory.context.connected = true;
+            this.platform.log.info('Successfully reconnected to roomba', this.device.name);
         }).on('close', () => {
             this.accessory.context.connected = false;
-            this.roomba.removeAllListeners();
 
             if (this.shutdown) {
                 this.platform.log.info('Roomba', this.device.name, 'connection closed');
-            } else {
-                this.platform.log.warn('Roomba', this.device.name, ' connection closed, reconnecting in 5 seconds');
 
-                setTimeout(() => {
-                    this.platform.log.warn('Attempting To Reconnect To Roomba', this.device.name);
-                    this.configureRoomba();
-                }, 5000);
+                this.roomba.removeAllListeners();
+            } else {
+                this.platform.log.warn('Roomba', this.device.name, ' connection closed.');
             }
         }).on('state', this.updateRoombaState.bind(this));
     }

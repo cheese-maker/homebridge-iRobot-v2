@@ -11,6 +11,8 @@ declare module 'dorita980' {
       constructor(username: string, password: string, ip: string, version?: 2 | 3, interval?: number);
       /** Emitted on successful Connection. */
       on(event: 'connect', listener: () => void): this;
+      /** Emitted after a reconnection. */
+      on(event: 'reconnect', listener: () => void): this;
       /** Emitted after a disconnection. */
       on(event: 'close', listener: () => void): this;
       /** Emitted when the client goes offline. */
@@ -19,6 +21,7 @@ declare module 'dorita980' {
       on(event: 'update', listener: (data: Data) => void): this;
       /** Emitted every emitIntervalTime milliseconds with the mission data. (util for mapping in models with position reporting) */
       on(event: 'mission', listener: (data: cleanMissionStatus) => void): this;
+
       /**
      * Emitted every time the Robot publish a new message to the mqtt bus.
      * Will print the Full robot state!
