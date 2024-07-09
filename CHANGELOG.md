@@ -1,3 +1,7 @@
+### 3.1.0-alpha.3 
+* Experiment: Rework MQTT to prevent spams in the logs (when offline no longer force disconnect and reconnect)
+
+
 ### 3.1.0-alpha.2 
 * Add multiroom support for m6
 
