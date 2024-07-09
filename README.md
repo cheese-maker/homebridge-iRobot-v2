@@ -36,23 +36,23 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 > Don't See Your Device Below?
 > Let Me Know If It Worked By Filling Out [This Template](https://github.com/taurgis/homebridge-iRobot-v2/issues/new?assignees=taurgis&labels=enchancment&template=add-supported-device.yml&title=Supported+Device%3A+)
 
-| Model | Supported | Reported By                                       |
-|-|-----------|---------------------------------------------------|
-| J7 | No        | [spurzack](https://github.com/spurzack)           |
-| j7 | No        | [franciswernet](https://github.com/franciswernet) |
-| j7 | No        | [franciswernet](https://github.com/franciswernet) |
-| j7 | No        | [VinceBab](https://github.com/VinceBab)           |
-| i7 | Yes       | [Clouder59](https://github.com/Clouder59)         |
-| 606 | No        | [PvdGulik](https://github.com/PvdGulik)           |
+| Model     | Supported | Reported By                                       |
+|-----------|-----------|---------------------------------------------------|
+| J7        | No        | [spurzack](https://github.com/spurzack)           |
+| j7        | No        | [franciswernet](https://github.com/franciswernet) |
+| j7        | No        | [franciswernet](https://github.com/franciswernet) |
+| j7        | No        | [VinceBab](https://github.com/VinceBab)           |
+| i7        | Yes       | [Clouder59](https://github.com/Clouder59)         |
+| 606       | No        | [PvdGulik](https://github.com/PvdGulik)           |
 | Braava m6 | Yes       | [taurgis](https://github.com/taurgis)             |
-| m6 | Yes       | [ginoledesma](https://github.com/ginoledesma)     |
-| j7 | Yes       | [ginoledesma](https://github.com/ginoledesma)     |
-| i3 | yes       | [taurgis](https://github.com/taurgis)             |
-| 980 | No        | [jeanchrijaz](https://github.com/jeanchrijaz)     |
-| i9 | Yes       | [douginoz](https://github.com/douginoz)           |
-| 960 | Yes       | [NateUT99](https://github.com/NateUT99)           |
-| 965 | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
-| i8 | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
+| m6        | Yes       | [ginoledesma](https://github.com/ginoledesma)     |
+| j7        | Yes       | [ginoledesma](https://github.com/ginoledesma)     |
+| i3        | yes       | [taurgis](https://github.com/taurgis)             |
+| 980       | No        | [jeanchrijaz](https://github.com/jeanchrijaz)     |
+| i9        | Yes       | [douginoz](https://github.com/douginoz)           |
+| 960       | Yes       | [NateUT99](https://github.com/NateUT99)           |
+| 965       | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
+| i8        | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
 
 
 ## Features:
