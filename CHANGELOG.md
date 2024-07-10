@@ -1,3 +1,7 @@
+### 3.1.0-alpha.4 
+* Battery percentage information wrong on M6 investigation
+
+
 ### 3.1.0-alpha.3 
 * Experiment: Rework MQTT to prevent spams in the logs (when offline no longer force disconnect and reconnect)
 
