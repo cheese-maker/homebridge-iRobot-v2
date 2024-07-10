@@ -179,11 +179,18 @@ export class iRobotPlatformAccessory {
                 this.platform.log.info('Roomba', this.device.name, 'Says "Thank You For Freeing Me"');
             }
         }
+
         this.lastStatus = data.cleanMissionStatus;
-        if ((this.device.multiRoom && (data.lastCommand.pmap_id !== null && data.lastCommand.pmap_id !== undefined))
-      && data.lastCommand.pmap_id !== this.lastCommandStatus.pmap_id) {
+
+        if (
+            (this.device.multiRoom &&
+                (data.lastCommand.pmap_id !== null && data.lastCommand.pmap_id !== undefined)
+            )
+            && data.lastCommand.pmap_id !== this.lastCommandStatus.pmap_id
+        ) {
             this.updateMap(data.lastCommand);
         }
+
         this.lastCommandStatus = data.lastCommand;
 
         /*------------------------------------------------------------------------------------------------------------------------------------*/
@@ -220,6 +227,8 @@ export class iRobotPlatformAccessory {
         this.battery.updateCharacteristic(this.platform.Characteristic.BatteryLevel, this.batteryStatus.percent);
         this.battery.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, this.batteryStatus.low);
         this.battery.updateCharacteristic(this.platform.Characteristic.ChargingState, this.batteryStatus.charging);
+
+        this.platform.log.info('Updated Roomba:', this.device.name, '\n', JSON.stringify(data, null, 2));
     }
 
     updateMap(lastCommand: { pmap_id: never, regions: [{region_id?: string}], user_pmapv_id: never }) {
