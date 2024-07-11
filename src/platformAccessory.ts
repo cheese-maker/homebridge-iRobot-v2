@@ -31,7 +31,7 @@ export class iRobotPlatformAccessory {
     private lastStatus = { cycle: '', phase: '' };
     private lastCommandStatus = { pmap_id: null };
     private state = 0;
-    private binfull = 0;
+    private binFull = 0;
     private batteryStatus = { 'low': false, 'percent': 50, 'charging': true };
     private stuckStatus = false;
     private roomByRoom = false;
@@ -165,11 +165,14 @@ export class iRobotPlatformAccessory {
     }
 
     updateRoombaState(data) {
+        this.platform.log.info('Getting update from Roomba');
+        this.platform.log.info('Updating Roomba:' + this.device.name + '\n' + JSON.stringify(data, null, 2));
+
         if (data.cleanMissionStatus.cycle !== this.lastStatus.cycle || data.cleanMissionStatus.phase !== this.lastStatus.phase) {
             eventEmitter.emit('state');
 
             this.platform.log.debug(this.device.name + '\'s mission update:',
-                '\n cleeanMissionStatus:', JSON.stringify(data.cleanMissionStatus, null, 2),
+                '\n cleanMissionStatus:', JSON.stringify(data.cleanMissionStatus, null, 2),
                 '\n batPct:', data.batPct,
                 '\n bin:', JSON.stringify(data.bin),
                 '\n lastCommand:', JSON.stringify(data.lastCommand));
@@ -180,8 +183,6 @@ export class iRobotPlatformAccessory {
             }
         }
 
-        this.lastStatus = data.cleanMissionStatus;
-
         if (
             (this.device.multiRoom &&
                 (data.lastCommand.pmap_id !== null && data.lastCommand.pmap_id !== undefined)
@@ -191,33 +192,23 @@ export class iRobotPlatformAccessory {
             this.updateMap(data.lastCommand);
         }
 
-        this.lastCommandStatus = data.lastCommand;
 
-        /*------------------------------------------------------------------------------------------------------------------------------------*/
+        this.updatePlatformAccessoryInternalState(data);
+        this.updatePlatformAccessoryCharacteristics();
+    }
 
-        this.active = this.getHomekitActive(data.cleanMissionStatus);
-
-        this.state = this.active ? 2 : this.getEveInactive(data.cleanMissionStatus) ? 0 : 1;
-
-        this.binfull = data.bin.full ? 1 : 0;
-
-        this.stuckStatus = data.cleanMissionStatus.phase === 'stuck';
-
-        this.batteryStatus.charging = data.cleanMissionStatus.phase === 'charge';
-        this.batteryStatus.low = this.batteryStatus.charging && data.batPct < (this.platform.config.lowBattery || 20);
-        this.batteryStatus.percent = data.batPct;
-
+    private updatePlatformAccessoryCharacteristics() {
         this.service.updateCharacteristic(this.platform.Characteristic.Active, this.active ? 1 : 0);
         this.service.updateCharacteristic(this.platform.Characteristic.CurrentFanState, this.state);
 
         if (this.binConfig.includes('filter')) {
-            this.binFilter.updateCharacteristic(this.platform.Characteristic.FilterChangeIndication, this.binfull);
+            this.binFilter.updateCharacteristic(this.platform.Characteristic.FilterChangeIndication, this.binFull);
         }
         if (this.binConfig.includes('contact')) {
-            this.binContact.updateCharacteristic(this.platform.Characteristic.ContactSensorState, this.binfull);
+            this.binContact.updateCharacteristic(this.platform.Characteristic.ContactSensorState, this.binFull);
         }
         if (this.binConfig.includes('motion')) {
-            this.binMotion.updateCharacteristic(this.platform.Characteristic.MotionDetected, this.binfull === 1);
+            this.binMotion.updateCharacteristic(this.platform.Characteristic.MotionDetected, this.binFull === 1);
         }
 
         if (this.platform.config.hideStuckSensor) {
@@ -227,8 +218,18 @@ export class iRobotPlatformAccessory {
         this.battery.updateCharacteristic(this.platform.Characteristic.BatteryLevel, this.batteryStatus.percent);
         this.battery.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, this.batteryStatus.low);
         this.battery.updateCharacteristic(this.platform.Characteristic.ChargingState, this.batteryStatus.charging);
+    }
 
-        this.platform.log.info('Updated Roomba:' + this.device.name + '\n' + JSON.stringify(data, null, 2));
+    private updatePlatformAccessoryInternalState(data) {
+        this.lastStatus = data.cleanMissionStatus;
+        this.lastCommandStatus = data.lastCommand;
+        this.active = this.getHomekitActive(data.cleanMissionStatus);
+        this.state = this.active ? 2 : this.getEveInactive(data.cleanMissionStatus) ? 0 : 1;
+        this.binFull = data.bin.full ? 1 : 0;
+        this.stuckStatus = data.cleanMissionStatus.phase === 'stuck';
+        this.batteryStatus.charging = data.cleanMissionStatus.phase === 'charge';
+        this.batteryStatus.low = this.batteryStatus.charging && data.batPct < (this.platform.config.lowBattery || 20);
+        this.batteryStatus.percent = data.batPct;
     }
 
     updateMap(lastCommand: { pmap_id: never, regions: [{region_id?: string}], user_pmapv_id: never }) {
@@ -391,20 +392,20 @@ export class iRobotPlatformAccessory {
     }
 
     async getBinfull(): Promise<CharacteristicValue> {
-        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Bin Full:', this.binfull);
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Bin Full:', this.binFull);
 
         if (this.accessory.context.connected) {
-            return this.binfull;
+            return this.binFull;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
         }
     }
 
     async getBinfullBoolean(): Promise<CharacteristicValue> {
-        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Bin Full:', this.binfull === 1);
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Bin Full:', this.binFull === 1);
 
         if (this.accessory.context.connected) {
-            return this.binfull === 1;
+            return this.binFull === 1;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
         }

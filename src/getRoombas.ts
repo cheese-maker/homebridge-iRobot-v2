@@ -16,7 +16,7 @@ export function getRoombas(email: string, password: string, log: Logger, config:
             robots = JSON.parse(Robots);
             log.debug(Robots);
         } catch (e) {
-            log.error('Faild to login to iRobot, see below for details');
+            log.error('Failed to login to iRobot, see below for details');
             log.error(Robots);
         }
     }
@@ -33,11 +33,8 @@ export function getRoombas(email: string, password: string, log: Logger, config:
             try {
                 const robotInfo = JSON.parse(robotIP);
 
-                log.debug(robotIP);
-
                 robot.ip = robotInfo.ip;
                 delete robotInfo.ip;
-
                 robot.model = getModel(robotInfo.sku);
                 robot.multiRoom = getMultiRoom(robot.model);
                 robot.info = robotInfo;
@@ -56,7 +53,7 @@ export function getRoombas(email: string, password: string, log: Logger, config:
     });
 
     for (const roomba of badRoombas) {
-        log.warn('Disabling Unconfigured Roomba:', roomba.name);
+        log.warn('Not creating an accessory for unreachable Roomba:', roomba.name);
     }
 
     return goodRoombas;
