@@ -165,8 +165,7 @@ export class iRobotPlatformAccessory {
     }
 
     updateRoombaState(data) {
-        this.platform.log.info('Getting update from Roomba');
-        this.platform.log.info('Updating Roomba:' + this.device.name + '\n' + JSON.stringify(data, null, 2));
+        this.platform.log.debug('Getting update message:' + this.device.name + '\n' + JSON.stringify(data, null, 2));
 
         if (data.cleanMissionStatus.cycle !== this.lastStatus.cycle || data.cleanMissionStatus.phase !== this.lastStatus.phase) {
             eventEmitter.emit('state');
@@ -230,6 +229,9 @@ export class iRobotPlatformAccessory {
         this.batteryStatus.charging = data.cleanMissionStatus.phase === 'charge';
         this.batteryStatus.low = this.batteryStatus.charging && data.batPct < (this.platform.config.lowBattery || 20);
         this.batteryStatus.percent = data.batPct;
+
+        this.platform.log.info('Updating Roomba:', this.device.name, 'Battery:', this.batteryStatus.percent, '%');
+        this.platform.log.info('Received battery percentage:', data.batPct, 'from roomba:', this.device.name);
     }
 
     updateMap(lastCommand: { pmap_id: never, regions: [{region_id?: string}], user_pmapv_id: never }) {
