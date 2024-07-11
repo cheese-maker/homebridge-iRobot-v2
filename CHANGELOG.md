@@ -1,3 +1,7 @@
+### 3.1.0-alpha.13 
+* Check for presence of bin on Roomba update messages as models such as M6 don't have a bin.
+
+
 ### 3.1.0-alpha.8 
 * Improve logging
 
