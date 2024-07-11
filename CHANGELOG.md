@@ -1,3 +1,7 @@
+### 3.1.0-alpha.6 
+* Rework info logging
+
+
 ### 3.1.0-alpha.5 
 * Remove unnecessary INFO logging when HomeKit asks for the latest status of the accessory.
 
