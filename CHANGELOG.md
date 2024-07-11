@@ -1,3 +1,7 @@
+### 3.1.0-alpha.8 
+* Improve logging
+
+
 ### 3.1.0-alpha.7 
 * Added extra logging for status updates from Roombo
 * Code cleanup
