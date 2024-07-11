@@ -228,7 +228,7 @@ export class iRobotPlatformAccessory {
         this.battery.updateCharacteristic(this.platform.Characteristic.StatusLowBattery, this.batteryStatus.low);
         this.battery.updateCharacteristic(this.platform.Characteristic.ChargingState, this.batteryStatus.charging);
 
-        this.platform.log.info('Updated Roomba:', this.device.name, '\n', JSON.stringify(data, null, 2));
+        this.platform.log.info('Updated Roomba:' + this.device.name + '\n' + JSON.stringify(data, null, 2));
     }
 
     updateMap(lastCommand: { pmap_id: never, regions: [{region_id?: string}], user_pmapv_id: never }) {
