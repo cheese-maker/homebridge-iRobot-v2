@@ -1,3 +1,8 @@
+### 3.1.0-alpha.7 
+* Added extra logging for status updates from Roombo
+* Code cleanup
+
+
 ### 3.1.0-alpha.6 
 * Rework info logging
 
