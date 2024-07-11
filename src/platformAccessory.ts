@@ -371,6 +371,8 @@ export class iRobotPlatformAccessory {
      * Note: These get requests are verry performance sensitive. Make sure to optimize them as much as possible.
      */
     async get(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Active State:', this.active ? 'On' : 'Off');
+
         if (this.accessory.context.connected) {
             return this.active ? 1 : 0;
         } else {
@@ -379,6 +381,8 @@ export class iRobotPlatformAccessory {
     }
 
     async getState(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Fan State:', this.state);
+
         if (this.accessory.context.connected) {
             return this.state;
         } else {
@@ -387,6 +391,8 @@ export class iRobotPlatformAccessory {
     }
 
     async getBinfull(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Bin Full:', this.binfull);
+
         if (this.accessory.context.connected) {
             return this.binfull;
         } else {
@@ -395,6 +401,8 @@ export class iRobotPlatformAccessory {
     }
 
     async getBinfullBoolean(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Bin Full:', this.binfull === 1);
+
         if (this.accessory.context.connected) {
             return this.binfull === 1;
         } else {
@@ -403,6 +411,8 @@ export class iRobotPlatformAccessory {
     }
 
     async getBatteryLevel(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Battery Level:', this.batteryStatus.percent);
+
         if (this.accessory.context.connected) {
             return this.batteryStatus.percent;
         } else {
@@ -411,6 +421,8 @@ export class iRobotPlatformAccessory {
     }
 
     async getBatteryStatus(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Battery Status:', this.batteryStatus.low ? 'Low' : 'Normal');
+
         if (this.accessory.context.connected) {
             return this.batteryStatus.low ? 1 : 0;
         } else {
@@ -419,6 +431,8 @@ export class iRobotPlatformAccessory {
     }
 
     async getChargeState(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Charging State:', this.batteryStatus.charging ? 'Charging' : 'Not Charging');
+
         if (this.accessory.context.connected) {
             return this.batteryStatus.charging ? 1 : 0;
         } else {
@@ -427,6 +441,8 @@ export class iRobotPlatformAccessory {
     }
 
     async getMode(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Mode:', this.roomByRoom ? 'Room-By-Room' : 'Everywhere');
+
         if (this.accessory.context.connected) {
             return this.roomByRoom ? 0 : 1;
         } else {
@@ -435,6 +451,8 @@ export class iRobotPlatformAccessory {
     }
 
     async getStuck(): Promise<CharacteristicValue> {
+        this.platform.log.debug('Homekit Requested', this.device.name, '\'s Stuck State:', this.stuckStatus ? 'Stuck' : 'Not Stuck');
+
         if (this.accessory.context.connected) {
             return this.stuckStatus;
         } else {
