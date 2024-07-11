@@ -21,7 +21,9 @@ export function getRoombas(email: string, password: string, log: Logger, config:
         }
     }
 
-    const badRoombas: number[] = [];
+    const goodRoombas: Robot[] = [];
+    const badRoombas: Robot[] = [];
+
     robots.forEach(robot => {
         if (robot.autoConfig || !config.autoDiscovery) {
             log.info('Configuring roomba:', robot.name);
@@ -39,12 +41,13 @@ export function getRoombas(email: string, password: string, log: Logger, config:
                 robot.model = getModel(robotInfo.sku);
                 robot.multiRoom = getMultiRoom(robot.model);
                 robot.info = robotInfo;
+
+                goodRoombas.push(robot);
             } catch (e) {
                 try {
-                    log.error('Failed to configure roomba:', robot.name, '-', robot.ip, 'see below for details');
-                    log.error(e as string);
+                    log.error('Failed to connect roomba:', robot.name, 'with error:', robotIP);
                 } finally {
-                    badRoombas.push(robots.indexOf(robot));
+                    badRoombas.push(robot);
                 }
             }
         } else {
@@ -53,15 +56,10 @@ export function getRoombas(email: string, password: string, log: Logger, config:
     });
 
     for (const roomba of badRoombas) {
-        log.warn('Disabling Unconfigured Roomba:', robots[roomba].name);
-        try {
-            robots.splice(roomba);
-        } catch (e) {
-            log.error('Failed To Disable Unconfigured Roomba:', robots[roomba].name, 'see below for details');
-            log.error(e as string);
-        }
+        log.warn('Disabling Unconfigured Roomba:', roomba.name);
     }
-    return robots;
+
+    return goodRoombas;
 
 }
 function getModel(sku: string):string {
