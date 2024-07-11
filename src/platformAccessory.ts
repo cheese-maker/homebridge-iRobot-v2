@@ -224,14 +224,16 @@ export class iRobotPlatformAccessory {
         this.lastCommandStatus = data.lastCommand;
         this.active = this.getHomekitActive(data.cleanMissionStatus);
         this.state = this.active ? 2 : this.getEveInactive(data.cleanMissionStatus) ? 0 : 1;
-        this.binFull = data.bin.full ? 1 : 0;
+
+        // Some models like the M6 don't have a bin sensor
+        if (data.bin) {
+            this.binFull = data.bin.full ? 1 : 0;
+        }
+
         this.stuckStatus = data.cleanMissionStatus.phase === 'stuck';
         this.batteryStatus.charging = data.cleanMissionStatus.phase === 'charge';
         this.batteryStatus.low = this.batteryStatus.charging && data.batPct < (this.platform.config.lowBattery || 20);
         this.batteryStatus.percent = data.batPct;
-
-        this.platform.log.info('Updating Roomba:', this.device.name, 'Battery:', this.batteryStatus.percent, '%');
-        this.platform.log.info('Received battery percentage:', data.batPct, 'from roomba:', this.device.name);
     }
 
     updateMap(lastCommand: { pmap_id: never, regions: [{region_id?: string}], user_pmapv_id: never }) {
