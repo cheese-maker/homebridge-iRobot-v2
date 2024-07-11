@@ -365,21 +365,13 @@ export class iRobotPlatformAccessory {
     }
 
     /**
-   * Handle the "GET" requests from HomeKit
-   * These are sent when HomeKit wants to know the current state of the accessory, for example, checking if a Light bulb is on.
-   *
-   * GET requests should return as fast as possbile. A long delay here will result in
-   * HomeKit being unresponsive and a bad user experience in general.
-   *
-   * If your device takes time to respond you should update the status of your device
-   * asynchronously instead using the `updateCharacteristic` method instead.
-
-   * @example
-   * this.service.updateCharacteristic(this.platform.Characteristic.On, true)
-   */
+     * Handle the "GET" requests from HomeKit
+     * These are sent when HomeKit wants to know the current state of the accessory, for example, checking if a Light bulb is on.
+     *
+     * Note: These get requests are verry performance sensitive. Make sure to optimize them as much as possible.
+     */
     async get(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'To', this.active ? 'On' : 'Off');
             return this.active ? 1 : 0;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -388,7 +380,6 @@ export class iRobotPlatformAccessory {
 
     async getState(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'Mode To', this.state === 0 ? 'Off' : this.state === 1 ? 'Idle' : 'On');
             return this.state;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -397,7 +388,6 @@ export class iRobotPlatformAccessory {
 
     async getBinfull(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'Binfull To', this.binfull === 0 ? 'OK' : 'FULL');
             return this.binfull;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -406,7 +396,6 @@ export class iRobotPlatformAccessory {
 
     async getBinfullBoolean(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'Binfull To', this.binfull === 0 ? 'OK' : 'FULL');
             return this.binfull === 1;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -415,7 +404,6 @@ export class iRobotPlatformAccessory {
 
     async getBatteryLevel(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'Battery Level To', this.batteryStatus.percent);
             return this.batteryStatus.percent;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -424,7 +412,6 @@ export class iRobotPlatformAccessory {
 
     async getBatteryStatus(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'Battery Status To', this.batteryStatus.low ? 'Low' : 'Normal');
             return this.batteryStatus.low ? 1 : 0;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -433,7 +420,6 @@ export class iRobotPlatformAccessory {
 
     async getChargeState(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'Charge Status To', this.batteryStatus.charging ? 'Charging' : 'Not Charging');
             return this.batteryStatus.charging ? 1 : 0;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -442,7 +428,6 @@ export class iRobotPlatformAccessory {
 
     async getMode(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'Mode To', this.roomByRoom ? 'Room-By-Room' : 'Everywhere');
             return this.roomByRoom ? 0 : 1;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -451,7 +436,6 @@ export class iRobotPlatformAccessory {
 
     async getStuck(): Promise<CharacteristicValue> {
         if (this.accessory.context.connected) {
-            this.platform.log.info('Updating', this.device.name, 'Stuck To', this.stuckStatus);
             return this.stuckStatus;
         } else {
             throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
@@ -461,15 +445,15 @@ export class iRobotPlatformAccessory {
     async identify() {
         if (this.accessory.context.connected) {
             await this.roomba.find();
+
             this.platform.log.info('Identifying', this.device.name, '(Note: Some Models Won\'t Beep If Docked');
         }
     }
 
 
     /**
-   * Handle "SET" requests from HomeKit
-   * These are sent when the user changes the state of an accessory, for example, changing the Brightness
-   */
+     * Handle "SET" requests from HomeKit
+     */
     async set(value: CharacteristicValue) {
         if (this.accessory.context.connected) {
             const configOffAction: string[] = this.platform.config.offAction.split(':');
