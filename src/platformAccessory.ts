@@ -168,7 +168,7 @@ export class iRobotPlatformAccessory {
                             this.device.name,
                             ' has been reconnecting too many times in the last 30 seconds, stopping...',
                             '\n',
-                            'This is probably related due to the limited connection slots on the Roomba, try closing any other application',
+                            'This is probably related due to the limited (1) connection slots on the Roomba, try closing any other application',
                             'on services that might be connected to the Roomba.',
                         );
                         this.roomba.end();
