@@ -4,7 +4,7 @@ import events from 'events';
 const eventEmitter = new events.EventEmitter();
 
 import { Robot } from './getRoombas';
-import dorita980 from 'dorita980';
+import dorita980 from '@taurgis/roomba-unofficial-sdk';
 
 
 /**
@@ -21,7 +21,6 @@ export class iRobotPlatformAccessory {
     private binMotion!: Service;
     private shutdown = false;
     private starting = false;
-
 
     private binConfig: string[] = this.device.multiRoom && this.platform.config.ignoreMultiRoomBin ?
         [] : this.platform.config.bin.split(':');
@@ -133,35 +132,68 @@ export class iRobotPlatformAccessory {
     }
 
     async configureRoomba() {
+        const reconnectTimestamps: number[] = [];
+
+
         this.accessory.context.connected = false;
 
         if (this.device.info.sku?.startsWith('j')) {
             process.env.ROBOT_CIPHERS = 'TLS_AES_256_GCM_SHA384';
         }
 
-        this.roomba = new dorita980.Local(this.device.blid, this.device.password, this.device.ip,
-            this.device.info.ver !== undefined ? parseInt(this.device.info.ver) as 2 | 3 : 2);
+        try {
+            this.roomba = new dorita980.Local(this.device.blid, this.device.password, this.device.ip,
+                this.device.info.ver !== undefined ? parseInt(this.device.info.ver) as 2 | 3 : 2);
 
-        this.roomba.on('connect', () => {
-            this.accessory.context.connected = true;
-            this.platform.log.info('Successfully connected to roomba', this.device.name);
-        }).on('offline', () => {
-            this.accessory.context.connected = false;
-            this.platform.log.warn('Roomba', this.device.name, ' went offline...');
-        }).on('reconnect', () => {
-            this.accessory.context.connected = true;
-            this.platform.log.info('Successfully reconnected to roomba', this.device.name);
-        }).on('close', () => {
-            this.accessory.context.connected = false;
+            this.roomba.on('connect', () => {
+                this.accessory.context.connected = true;
+                this.platform.log.info('Successfully connected to roomba', this.device.name);
+            }).on('offline', () => {
+                this.accessory.context.connected = false;
+                this.platform.log.warn('Roomba', this.device.name, ' went offline...');
+            }).on('reconnect', () => {
+                this.accessory.context.connected = true;
+                this.platform.log.info('Successfully reconnected to roomba', this.device.name);
 
-            if (this.shutdown) {
-                this.platform.log.info('Roomba', this.device.name, 'connection closed');
+                reconnectTimestamps.push(Date.now());
 
-                this.roomba.removeAllListeners();
-            } else {
-                this.platform.log.warn('Roomba', this.device.name, ' connection closed.');
-            }
-        }).on('state', this.updateRoombaState.bind(this));
+                // If we have more than 5 timestamps, remove the oldest one
+                if (reconnectTimestamps.length > 5) {
+                    reconnectTimestamps.shift();
+
+                    // If the difference between the oldest and the newest timestamp is less than or equal to 30 seconds
+                    if (reconnectTimestamps[reconnectTimestamps.length - 1] - reconnectTimestamps[0] <= 30000) {
+                        this.platform.log.error(
+                            'Roomba',
+                            this.device.name,
+                            ' has been reconnecting too many times in the last 30 seconds, stopping...',
+                            '\n',
+                            'This is probably related due to the limited connection slots on the Roomba, try closing any other application',
+                            'on services that might be connected to the Roomba.',
+                        );
+                        this.roomba.end();
+                        this.platform.log.error('Roomba', this.device.name, ' has been stopped, trying to reconnect in 5 minutes...');
+
+                        // Let us try again in five minutes
+                        setTimeout(() => {
+                            this.configureRoomba();
+                        }, 300000);
+                    }
+                }
+            }).on('close', () => {
+                this.accessory.context.connected = false;
+
+                if (this.shutdown) {
+                    this.platform.log.info('Roomba', this.device.name, 'connection closed');
+
+                    this.roomba.removeAllListeners();
+                } else {
+                    this.platform.log.warn('Roomba', this.device.name, ' connection closed.');
+                }
+            }).on('state', this.updateRoombaState.bind(this));
+        } catch (err) {
+            this.platform.log.error('Fatal error connecting to Roomba:', this.device.name);
+        }
     }
 
     updateRoombaState(data) {
