@@ -284,6 +284,11 @@ export class iRobotPlatformAccessory {
 
                     for (const region_ of this.accessory.context.maps[index].regions) {
                         if (region_.region_id === region.region_id) {
+                            const regionIndex = this.accessory.context.maps[index].regions.indexOf(region_);
+
+                            this.platform.log.info('Updating existing region for roomba.', this.device.name, '(', region.region_id, ')');
+                            this.accessory.context.maps[index].regions[regionIndex] = region;
+
                             exists = true;
                         }
                     }
