@@ -1,3 +1,7 @@
+### 3.2.0-alpha.3 
+* Preserve region parameters if present to prevent unusable room switches
+
+
 ### 3.2.0-alpha.2 
 * Update dependencies to fix ID error
 
