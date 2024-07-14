@@ -268,7 +268,7 @@ export class iRobotPlatformAccessory {
 
     updateMap(lastCommand: {
         pmap_id: never, regions: [{
-            parameters: any,
+            parameters: object,
             region_id?: string,
         }],
         user_pmapv_id: never,
