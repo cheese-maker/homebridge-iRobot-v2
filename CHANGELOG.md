@@ -1,3 +1,7 @@
+### 3.2.0-alpha.5 
+* Update user_pmapv_id when a change has been detected (usually when a map update suggestion was accepted, or a re-mapping has happened)
+
+
 ### 3.2.0-alpha.4 
 * Minor bugfix + less logging
 
