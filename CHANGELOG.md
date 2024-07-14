@@ -1,3 +1,7 @@
+### 3.2.0-alpha.2 
+* Update dependencies to fix ID error
+
+
 ### 3.2.0-alpha.1 
 * When smart map is updated, update region information (fix attempt 1) so that the switches in Homekit keep working
 
