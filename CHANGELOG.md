@@ -1,3 +1,7 @@
+### 3.2.0-alpha.4 
+* Minor bugfix + less logging
+
+
 ### 3.2.0-alpha.3 
 * Preserve region parameters if present to prevent unusable room switches
 
