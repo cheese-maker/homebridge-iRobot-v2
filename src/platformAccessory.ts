@@ -283,6 +283,13 @@ export class iRobotPlatformAccessory {
             }
 
             if (index !== -1) {
+                //update the user_pmapv_id if necessary
+                if (lastCommand.user_pmapv_id !== this.accessory.context.maps[index].user_pmapv_id) {
+                    this.platform.log.info('Updating user_pmapv_id for roomba since the map was updated since last time:', this.device.name, '(', lastCommand.user_pmapv_id, ')');
+
+                    this.accessory.context.maps[index].user_pmapv_id = lastCommand.user_pmapv_id;
+                }
+
                 for (const region of lastCommand.regions) {
                     let exists = false;
 
