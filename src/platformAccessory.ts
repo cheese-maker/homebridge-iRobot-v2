@@ -197,8 +197,6 @@ export class iRobotPlatformAccessory {
     }
 
     updateRoombaState(data) {
-        this.platform.log.debug('Getting update message:' + this.device.name + '\n' + JSON.stringify(data, null, 2));
-
         if (data.cleanMissionStatus.cycle !== this.lastStatus.cycle || data.cleanMissionStatus.phase !== this.lastStatus.phase) {
             eventEmitter.emit('state');
 
@@ -268,7 +266,13 @@ export class iRobotPlatformAccessory {
         this.batteryStatus.percent = data.batPct;
     }
 
-    updateMap(lastCommand: { pmap_id: never, regions: [{region_id?: string}], user_pmapv_id: never }) {
+    updateMap(lastCommand: {
+        pmap_id: never, regions: [{
+            parameters: any,
+            region_id?: string,
+        }],
+        user_pmapv_id: never,
+    }) {
         if (this.accessory.context.maps !== undefined) {
             let index = -1;
 
@@ -287,6 +291,14 @@ export class iRobotPlatformAccessory {
                             const regionIndex = this.accessory.context.maps[index].regions.indexOf(region_);
 
                             this.platform.log.info('Updating existing region for roomba.', this.device.name, '(', region.region_id, ')');
+
+                            // If the current region has parameters, but the new one doesn't, keep the old parameters
+                            if (region_.parameters && !region.parameters) {
+                                region.parameters = region_.parameters;
+
+                                this.platform.log.debug('Keeping old parameters for region', region.region_id);
+                            }
+
                             this.accessory.context.maps[index].regions[regionIndex] = region;
 
                             exists = true;
