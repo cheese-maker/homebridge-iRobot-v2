@@ -274,29 +274,32 @@ export class iRobotPlatformAccessory {
         user_pmapv_id: never,
     }) {
         if (this.accessory.context.maps !== undefined) {
-            let index = -1;
+            let currentMap: {
+                regions: any,
+                user_pmapv_id: string,
+            } | null = null;
 
             for (const map of this.accessory.context.maps) {
                 if (map.pmap_id === lastCommand.pmap_id) {
-                    index = this.accessory.context.maps.indexOf(map);
+                    currentMap = map;
                 }
             }
 
-            if (index !== -1) {
+            if (currentMap) {
                 //update the user_pmapv_id if necessary
-                this.platform.log.debug('Comparing user_pmapv_id:', lastCommand.user_pmapv_id, 'with', this.accessory.context.maps[index].user_pmapv_id);
-                if (lastCommand.user_pmapv_id !== this.accessory.context.maps[index].user_pmapv_id) {
+                this.platform.log.debug('Comparing user_pmapv_id:', lastCommand.user_pmapv_id, 'with', currentMap.user_pmapv_id);
+                if (lastCommand.user_pmapv_id !== currentMap.user_pmapv_id) {
                     this.platform.log.info('Updating user_pmapv_id for roomba since the map was updated since last time:', this.device.name, '(', lastCommand.user_pmapv_id, ')');
 
-                    this.accessory.context.maps[index].user_pmapv_id = lastCommand.user_pmapv_id;
+                    currentMap.user_pmapv_id = lastCommand.user_pmapv_id;
                 }
 
                 for (const region of lastCommand.regions) {
                     let exists = false;
 
-                    for (const region_ of this.accessory.context.maps[index].regions) {
+                    for (const region_ of currentMap.regions) {
                         if (region_.region_id === region.region_id) {
-                            const regionIndex = this.accessory.context.maps[index].regions.indexOf(region_);
+                            const regionIndex = currentMap.regions.indexOf(region_);
 
                             this.platform.log.info('Updating existing region for roomba.', this.device.name, '(', region.region_id, ')');
 
@@ -307,7 +310,7 @@ export class iRobotPlatformAccessory {
                                 this.platform.log.debug('Keeping old parameters for region', region.region_id);
                             }
 
-                            this.accessory.context.maps[index].regions[regionIndex] = region;
+                            currentMap.regions[regionIndex] = region;
 
                             exists = true;
                         }
@@ -315,7 +318,7 @@ export class iRobotPlatformAccessory {
 
                     if (!exists) {
                         this.platform.log.info('Adding new region for roomba:', this.device.name, '\n', region);
-                        this.accessory.context.maps[index].regions.push(region);
+                        currentMap.regions.push(region);
                     }
                 }
 
@@ -344,8 +347,10 @@ export class iRobotPlatformAccessory {
                 'regions': lastCommand.regions,
                 'user_pmapv_id': lastCommand.user_pmapv_id,
             }];
-            this.platform.log.debug(this.device.name + '\'s map update:',
+
+            this.platform.log.debug(this.device.name + '\'s map create:',
                 '\n map:', JSON.stringify(this.accessory.context.maps));
+
             this.platform.log.info('Updating Homekit Rooms for Roomba:', this.device.name);
             this.updateRooms();
         }
@@ -529,7 +534,6 @@ export class iRobotPlatformAccessory {
             this.platform.log.info('Identifying', this.device.name, '(Note: Some Models Won\'t Beep If Docked');
         }
     }
-
 
     /**
      * Handle "SET" requests from HomeKit
