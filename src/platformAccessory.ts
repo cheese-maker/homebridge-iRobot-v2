@@ -275,7 +275,7 @@ export class iRobotPlatformAccessory {
     }) {
         if (this.accessory.context.maps !== undefined) {
             let currentMap: {
-                regions: any,
+                regions: [{ region_id?: string, parameters: object}],
                 user_pmapv_id: string,
             } | null = null;
 
@@ -361,6 +361,7 @@ export class iRobotPlatformAccessory {
 
         for (const map of this.accessory.context.maps) {
             const index = this.accessory.context.maps.indexOf(map);
+
             for (const region of map.regions) {
                 ((this.accessory.getService('Map ' + index + ' Room ' + region.region_id) ||
           this.accessory.addService(this.platform.Service.Switch,
