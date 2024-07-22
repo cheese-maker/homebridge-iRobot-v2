@@ -1,3 +1,7 @@
+### 3.2.0-alpha.8 
+- Cleanup of the code
+
+
 ### 3.2.0-alpha.7 
 * No changes
 
