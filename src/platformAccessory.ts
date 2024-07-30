@@ -170,8 +170,13 @@ export class iRobotPlatformAccessory {
                             '\n',
                             'This is probably related due to the limited (1) connection slots on the Roomba, try closing any other application',
                             'on services that might be connected to the Roomba.',
+                            '\n',
+                            'If this error persists, try restarting the Homebridge service or the Roomba, it is possible the IP address',
+                            'of the Roomba has changed.',
                         );
+
                         this.roomba.end();
+
                         this.platform.log.error('Roomba', this.device.name, ' has been stopped, trying to reconnect in 5 minutes...');
 
                         // Let us try again in five minutes
