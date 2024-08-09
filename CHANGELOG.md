@@ -1,3 +1,13 @@
+### 3.2.0 
+* Bugfixes
+* Code cleanup
+* Prepare for Homebridge v2
+* Update user_pmapv_id when a change has been detected (usually when a map update suggestion was accepted, or a re-mapping has happened)
+* Preserve region parameters if present to prevent unusable room switches
+* When smart map is updated, update region information so that the switches in Homekit keep working
+
+
+
 ### 3.2.0-alpha.8 
 - Cleanup of the code
 
