@@ -16,7 +16,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
  
 [![downloads](https://img.shields.io/npm/dt/homebridge-irobot-v2)](https://npmcharts.com/compare/homebridge-irobot-v2?log=true&interval=1&minimal=true)
 
-[![npm](https://img.shields.io/npm/v/homebridge-irobot-v2/latest?label=latest)](https://www.npmjs.com/package/homebridge-irobot)
+[![npm](https://img.shields.io/npm/v/homebridge-irobot-v2/latest?label=latest)](https://www.npmjs.com/package/homebridge-irobot-v2)
 [![npm](https://img.shields.io/npm/v/homebridge-irobot-v2/beta?label=beta)](../../wiki/Beta-Version)  
 [![npm](https://img.shields.io/npm/v/homebridge-irobot-v2/alpha?label=alpha)](../../wiki/Beta-Version)  
 
