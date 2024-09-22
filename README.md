@@ -21,7 +21,8 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 [![npm](https://img.shields.io/npm/v/homebridge-irobot-v2/alpha?label=alpha)](../../wiki/Beta-Version)  
 
 [![build workflow](https://github.com/taurgis/homebridge-iRobot-v2/actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
-[![license](https://badgen.net/github/license/taurgis/homebridge-irobot-v2)](/LICENSE)
+[![license](https://badgen.net/github/license/taurgis/homebridge-irobot-v2)](/LICENSE) [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+
 
 </span>
 
@@ -60,9 +61,10 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
   - [x] Battery Percent/Charging ifo
   - [x] Binfull Detection In The Form Of Filter/Contact/Motion Sensor
   - [x] Stuck Sensor
+  - [x] Verified By Homebridge
   
 ## TODO: 
-  - [ ] Approved By Homebridge
+  
   - [ ] Support iOS 18 Features
 
 ### Prerequisites
