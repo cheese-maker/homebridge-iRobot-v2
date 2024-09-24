@@ -1,3 +1,7 @@
+### 3.2.1 
+- Remove preinstall script (unnecessary global install)
+
+
 ### 3.2.0 
 * Bugfixes
 * Code cleanup
