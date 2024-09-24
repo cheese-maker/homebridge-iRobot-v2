@@ -43,6 +43,7 @@ export function getRoombas(email: string, password: string, log: Logger, config:
             } catch (e) {
                 try {
                     log.error('Failed to connect roomba:', robot.name, 'with error:', robotIP);
+                    log.error('This usually happens if the Roomba is not on the same network as Homebridge, or the Roomba is not reachable from the network');
                 } finally {
                     badRoombas.push(robot);
                 }
