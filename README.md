@@ -51,6 +51,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 | 960       | Yes       | [NateUT99](https://github.com/NateUT99)           |
 | 965       | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
 | i8        | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
+| y0        | No        | [Oloman2A](https://github.com/Oloman2A)           |
 
 
 ## Features:
