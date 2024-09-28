@@ -44,6 +44,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 | Braava m6 | Yes       | [taurgis](https://github.com/taurgis)             |
 | m6        | Yes       | [ginoledesma](https://github.com/ginoledesma)     |
 | j7        | Yes       | [ginoledesma](https://github.com/ginoledesma)     |
+| j7 Combo  | Yes       | [tomadimitrie](https://github.com/tomadimitrie)
 | i3        | yes       | [taurgis](https://github.com/taurgis)             |
 | 980       | No        | [jeanchrijaz](https://github.com/jeanchrijaz)     |
 | i9        | Yes       | [douginoz](https://github.com/douginoz)           |
