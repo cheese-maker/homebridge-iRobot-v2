@@ -1,12 +1,6 @@
-### 3.2.2 
-- Added try catch for auth errors to iRobot, preventing a full crash.
-
-
-### 3.2.3
-- Switch to auth01 for login to iRobot
-
 ### 3.2.2
 - Catch error when logging in to iRobot to prevent full crash
+
 
 ### 3.2.1 
 - Remove preinstall script (unnecessary global install)
