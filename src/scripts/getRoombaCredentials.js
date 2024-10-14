@@ -86,9 +86,9 @@ function handleGigyaSuccess(body) {
     }
 }
 
-function loginToIRobot(body) {
+function loginToIRobot(body, server = 1) {
     const iRobotLoginOptions = {
-        hostname: 'unauth1.prod.iot.irobotapi.com',
+        hostname: `unauth${server}.prod.iot.irobotapi.com`,
         path: '/v2/login',
         method: 'POST',
         headers: {
@@ -108,7 +108,11 @@ function loginToIRobot(body) {
             try {
                 loginIrobotResponseHandler(null, res, JSON.parse(data));
             } catch (e) {
-                loginIrobotResponseHandler(e);
+                if(server === 1) {
+                    loginToIRobot(body, 2);
+                } else {
+                    loginIrobotResponseHandler(e);
+                }
             }
         });
     });
