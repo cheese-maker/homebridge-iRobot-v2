@@ -105,7 +105,11 @@ function loginToIRobot(body) {
         });
 
         res.on('end', () => {
-            loginIrobotResponseHandler(null, res, JSON.parse(data));
+            try {
+                loginIrobotResponseHandler(null, res, JSON.parse(data));
+            } catch (e) {
+                loginIrobotResponseHandler(e);
+            }
         });
     });
 
