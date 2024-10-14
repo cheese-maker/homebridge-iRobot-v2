@@ -88,7 +88,7 @@ function handleGigyaSuccess(body) {
 
 function loginToIRobot(body) {
     const iRobotLoginOptions = {
-        hostname: 'unauth2.prod.iot.irobotapi.com',
+        hostname: 'unauth1.prod.iot.irobotapi.com',
         path: '/v2/login',
         method: 'POST',
         headers: {
