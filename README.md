@@ -41,6 +41,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 |-----------|-----------|---------------------------------------------------|
 | i7        | Yes       | [Clouder59](https://github.com/Clouder59)         |
 | 606       | No        | [PvdGulik](https://github.com/PvdGulik)           |
+| 698       | No        | [jojoballa](https://github.com/jojoballa)         |
 | Braava m6 | Yes       | [taurgis](https://github.com/taurgis)             |
 | m6        | Yes       | [ginoledesma](https://github.com/ginoledesma)     |
 | j7        | Yes       | [ginoledesma](https://github.com/ginoledesma)     |
@@ -50,6 +51,7 @@ Once the latest iOS 18 update is released, I will update the plugin to support t
 | i9        | Yes       | [douginoz](https://github.com/douginoz)           |
 | s9+       | Yes       | [bigadron](https://github.com/bigadron).          |
 | 960       | No        | [MathiasBrendel](https://github.com/MathiasBrendal)           |
+| 965       | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
 | 965       | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
 | i8        | Yes       | [bloomkd46](https://github.com/bloomkd46)         |
 | y0        | No        | [Oloman2A](https://github.com/Oloman2A)           |
