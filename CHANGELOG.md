@@ -1,3 +1,7 @@
+### 3.2.3 
+- Added a fallback mechanism to the iRobot login system to first check authentication URL 1, and if it fails, fall back to URL 2
+
+
 ### 3.2.2
 - Catch error when logging in to iRobot to prevent full crash
 
