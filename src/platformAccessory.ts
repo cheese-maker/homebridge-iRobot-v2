@@ -31,6 +31,8 @@ export class iRobotPlatformAccessory {
     private lastCommandStatus = { pmap_id: null };
     private state = 0;
     private binFull = 0;
+    private vacuum: Service; // New vacuum cleaner service
+    private battery: Service;
     private batteryStatus = { 'low': false, 'percent': 50, 'charging': true };
     private stuckStatus = false;
     private roomByRoom = false;
@@ -38,6 +40,20 @@ export class iRobotPlatformAccessory {
     constructor(
         private readonly platform: iRobotPlatform,
         private readonly accessory: PlatformAccessory,
+                // Initialize Vacuum Cleaner Service
+        this.vacuum = this.accessory.getService(this.platform.Service.VacuumCleaner) ||
+            this.accessory.addService(this.platform.Service.VacuumCleaner, `${device.name} Vacuum`, 'vacuum');
+        
+        this.vacuum.getCharacteristic(this.platform.Characteristic.Active)
+            .onSet(this.handleVacuumActiveSet.bind(this))
+            .onGet(this.handleVacuumActiveGet.bind(this));
+        
+        this.vacuum.getCharacteristic(this.platform.Characteristic.BatteryLevel)
+            .onGet(this.handleBatteryLevelGet.bind(this));
+        
+        this.vacuum.getCharacteristic(this.platform.Characteristic.ChargingState)
+            .onGet(this.handleChargingStateGet.bind(this));
+
         private readonly device: Robot,
     ) {
         this.platform.api.on('shutdown', () => {
@@ -82,9 +98,13 @@ export class iRobotPlatformAccessory {
             this.binMotion = this.accessory.getService(this.device.name + '\'s Bin Motion Sensor') ||
             this.accessory.addService(this.platform.Service.MotionSensor, this.device.name + '\'s Bin Motion Sensor', 'Motion-Bin');
         }
+        
+                // Battery Service (unchanged)
+        this.battery = this.accessory.getService(this.platform.Service.Battery) ||
+            this.accessory.addService(this.platform.Service.Battery);
+        
+        this.updateStatus(); // Initial Status Update
 
-        this.battery = this.accessory.getService(this.device.name + '\'s Battery') ||
-        this.accessory.addService(this.platform.Service.Battery, this.device.name + '\'s Battery', 'Battery-Service');
 
         if (!this.platform.config.hideStuckSensor) {
             this.stuck = this.accessory.getService(this.device.name + ' Stuck') ||
@@ -101,6 +121,83 @@ export class iRobotPlatformAccessory {
             this.service.getCharacteristic(this.platform.Characteristic.TargetFanState)
                 .onGet(this.getMode.bind(this))
                 .onSet(this.setMode.bind(this));
+        }
+                /**
+         * Handle Vacuum Active State
+         */
+        private async handleVacuumActiveSet(value: CharacteristicValue) {
+            const isActive = value as boolean;
+        
+            try {
+                if (isActive) {
+                    await this.roomba.start();
+                    this.platform.log.info(`${this.device.name}: Cleaning started.`);
+                } else {
+                    await this.roomba.pause();
+                    await this.roomba.dock();
+                    this.platform.log.info(`${this.device.name}: Cleaning paused and returning to dock.`);
+                }
+        
+                this.active = isActive;
+            } catch (error) {
+                this.platform.log.error(`${this.device.name}: Failed to update vacuum state.`, error);
+            }
+        }
+        
+        private async handleVacuumActiveGet(): Promise<CharacteristicValue> {
+            return this.active;
+        }
+        
+        /**
+         * Get Battery Level
+         */
+        private async handleBatteryLevelGet(): Promise<CharacteristicValue> {
+            try {
+                const state = await this.roomba.getRobotState(['batPct']);
+                return state.batPct || 0;
+            } catch (error) {
+                this.platform.log.error(`${this.device.name}: Failed to fetch battery level.`, error);
+                return 0;
+            }
+        }
+        
+        /**
+         * Get Charging State
+         */
+        private async handleChargingStateGet(): Promise<CharacteristicValue> {
+            try {
+                const state = await this.roomba.getRobotState(['charge']);
+                return state.charge === 1
+                    ? this.platform.Characteristic.ChargingState.CHARGING
+                    : this.platform.Characteristic.ChargingState.NOT_CHARGING;
+            } catch (error) {
+                this.platform.log.error(`${this.device.name}: Failed to fetch charging state.`, error);
+                return this.platform.Characteristic.ChargingState.NOT_CHARGING;
+            }
+        }
+        
+        /**
+         * Periodically Update Status
+         */
+        private updateStatus() {
+            setInterval(async () => {
+                try {
+                    const state = await this.roomba.getRobotState(['cleanMissionStatus', 'batPct', 'charge']);
+                    this.active = state.cleanMissionStatus.phase === 'run';
+        
+                    // Update Vacuum Characteristics
+                    this.vacuum.updateCharacteristic(this.platform.Characteristic.Active, this.active);
+                    this.vacuum.updateCharacteristic(this.platform.Characteristic.BatteryLevel, state.batPct || 0);
+                    this.vacuum.updateCharacteristic(
+                        this.platform.Characteristic.ChargingState,
+                        state.charge === 1
+                            ? this.platform.Characteristic.ChargingState.CHARGING
+                            : this.platform.Characteristic.ChargingState.NOT_CHARGING
+                    );
+                } catch (error) {
+                    this.platform.log.error(`${this.device.name}: Failed to fetch vacuum status.`, error);
+                }
+            }, 30000); // Update every 30 seconds
         }
 
         if (this.binConfig.includes('filter')) {
